@@ -1,0 +1,11 @@
+{
+  "name": "Remix: UXOLAO XKH Attendance and Leave System",
+  "description": "ລະບົບໝາຍວັນງານ ແລະ ການລາພັກຂອງພະນັກງານ ພ້ອມລາຍງານການເຂົ້າ-ອອກວຽກ ແລະ ແຈ້ງເຕືອນ",
+  "requestFramePermissions": [
+    "notifications",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

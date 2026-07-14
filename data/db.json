@@ -1,0 +1,324 @@
+{
+  "employees": [
+    {
+      "id": "emp-101",
+      "employeeCode": "EMP001",
+      "firstName": "ສົມສັກ",
+      "lastName": "ພົມມະວົງ",
+      "position": "ຜູ້ຈັດການທົ່ວໄປ (General Manager)",
+      "phone": "020 55512345",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      "id": "emp-102",
+      "employeeCode": "EMP002",
+      "firstName": "ແກ້ວມະນີ",
+      "lastName": "ຈັນທະລາ",
+      "position": "ຫົວໜ້າຝ່າຍການເງິນ (Head of Finance)",
+      "phone": "020 55523456",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      "id": "emp-103",
+      "employeeCode": "EMP003",
+      "firstName": "ວິໄຊ",
+      "lastName": "ໄຊຍະວົງ",
+      "position": "ນັກພັດທະນາຊອບແວ (Software Engineer)",
+      "phone": "020 55534567",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      "id": "emp-104",
+      "employeeCode": "EMP004",
+      "firstName": "ພອນວິໄລ",
+      "lastName": "ແກ້ວບົວລາ",
+      "position": "ຝ່າຍບໍລິການລູກຄ້າ (Customer Service)",
+      "phone": "020 55545678",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      "id": "emp-105",
+      "employeeCode": "EMP005",
+      "firstName": "ອາລຸນ",
+      "lastName": "ສີປະເສີດ",
+      "position": "ຝ່າຍຊັບພະຍາກອນມະນຸດ (HR Officer)",
+      "phone": "020 55556789",
+      "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200"
+    }
+  ],
+  "attendance": [
+    {
+      "id": "att-101-yesterday",
+      "employeeId": "emp-101",
+      "date": "2026-07-08",
+      "checkIn": "08:15:32",
+      "checkOut": "17:05:12",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.83,
+      "remarks": null
+    },
+    {
+      "id": "att-102-yesterday",
+      "employeeId": "emp-102",
+      "date": "2026-07-08",
+      "checkIn": "08:24:10",
+      "checkOut": "17:00:15",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.6,
+      "remarks": null
+    },
+    {
+      "id": "att-103-yesterday",
+      "employeeId": "emp-103",
+      "date": "2026-07-08",
+      "checkIn": "08:42:05",
+      "checkOut": "17:15:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.55,
+      "remarks": "ເຂົ້າວຽກສາຍ"
+    },
+    {
+      "id": "att-104-yesterday",
+      "employeeId": "emp-104",
+      "date": "2026-07-08",
+      "checkIn": null,
+      "checkOut": null,
+      "status": "ລາພັກ",
+      "leaveDetails": {
+        "type": "ລາພັກປະຈຳປີ",
+        "details": "ຂໍລາພັກໄປເຮັດວຽກສ່ວນຕົວຢູ່ຕ່າງແຂວງ",
+        "startDate": "2026-07-08",
+        "endDate": "2026-07-08",
+        "status": "approved"
+      },
+      "hoursWorked": null,
+      "remarks": null
+    },
+    {
+      "id": "att-105-yesterday",
+      "employeeId": "emp-105",
+      "date": "2026-07-08",
+      "checkIn": "08:10:00",
+      "checkOut": null,
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": null,
+      "remarks": "ລືມ Check Out"
+    },
+    {
+      "id": "att-101-db",
+      "employeeId": "emp-101",
+      "date": "2026-07-07",
+      "checkIn": "08:05:11",
+      "checkOut": "17:10:45",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 9.09,
+      "remarks": null
+    },
+    {
+      "id": "att-102-db",
+      "employeeId": "emp-102",
+      "date": "2026-07-07",
+      "checkIn": "08:29:40",
+      "checkOut": "17:01:22",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.53,
+      "remarks": null
+    },
+    {
+      "id": "att-103-db",
+      "employeeId": "emp-103",
+      "date": "2026-07-07",
+      "checkIn": "08:20:15",
+      "checkOut": "17:10:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.83,
+      "remarks": null
+    },
+    {
+      "id": "att-104-db",
+      "employeeId": "emp-104",
+      "date": "2026-07-07",
+      "checkIn": "08:22:15",
+      "checkOut": "17:00:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.63,
+      "remarks": null
+    },
+    {
+      "id": "att-105-db",
+      "employeeId": "emp-105",
+      "date": "2026-07-07",
+      "checkIn": null,
+      "checkOut": "17:05:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": null,
+      "remarks": "ລືມ Check In"
+    },
+    {
+      "id": "att-103-3",
+      "employeeId": "emp-103",
+      "date": "2026-07-06",
+      "checkIn": "08:30:00",
+      "checkOut": "17:00:00",
+      "status": "ໄປວຽກນອກ (ໝົດມື້)",
+      "tripDetails": {
+        "details": "ຕິດຕັ້ງລະບົບເຊີເວີໃຫ້ກັບລູກຄ້າທີ່ສາຂາຫຼວງພະບາງ",
+        "startDate": "2026-07-06",
+        "endDate": "2026-07-06"
+      },
+      "hoursWorked": 8.5,
+      "remarks": null
+    },
+    {
+      "id": "att-101-3",
+      "employeeId": "emp-101",
+      "date": "2026-07-06",
+      "checkIn": "08:20:00",
+      "checkOut": "17:00:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.67,
+      "remarks": null
+    },
+    {
+      "id": "att-102-3",
+      "employeeId": "emp-102",
+      "date": "2026-07-06",
+      "checkIn": "08:25:00",
+      "checkOut": "17:05:00",
+      "status": "ເຂົ້າວຽກປົກກະຕິ",
+      "hoursWorked": 8.67,
+      "remarks": null
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-101",
+      "employeeId": "emp-101",
+      "employeeName": "ສົມສັກ ພົມມະວົງ",
+      "type": "check_in",
+      "message": "ໄດ້ເຮັດການ Check In ເຂົ້າວຽກປົກກະຕິ ເວລາ 08:15:32",
+      "timestamp": "2026-07-08 08:15:32",
+      "read": true
+    },
+    {
+      "id": "notif-102",
+      "employeeId": "emp-102",
+      "employeeName": "ແກ້ວມະນີ ຈັນທະລາ",
+      "type": "check_in",
+      "message": "ໄດ້ເຮັດການ Check In ເຂົ້າວຽກປົກກະຕິ ເວລາ 08:24:10",
+      "timestamp": "2026-07-08 08:24:10",
+      "read": true
+    },
+    {
+      "id": "notif-104",
+      "employeeId": "emp-104",
+      "employeeName": "ພອນວິໄລ ແກ້ວບົວລາ",
+      "type": "leave_request",
+      "message": "ໄດ້ສົ່ງໃບສະເໜີ ລາພັກປະຈຳປີ ວັນທີ 2026-07-08 ເຫດຜົນ: ຂໍລາພັກໄປເຮັດວຽກສ່ວນຕົວຢູ່ຕ່າງແຂວງ",
+      "timestamp": "2026-07-08 09:30:15",
+      "read": false
+    }
+  ],
+  "shifts": [
+    {
+      "id": "shift-101-today",
+      "employeeId": "emp-101",
+      "date": "2026-07-09",
+      "shiftType": "full_day",
+      "startTime": "08:30",
+      "endTime": "17:00",
+      "notes": "ປະຊຸມວາງແຜນປະຈຳເດືອນ"
+    },
+    {
+      "id": "shift-102-today",
+      "employeeId": "emp-102",
+      "date": "2026-07-09",
+      "shiftType": "morning",
+      "startTime": "08:30",
+      "endTime": "12:00",
+      "notes": "ກວດສອບງົບປະມານໄຕມາດ 2"
+    },
+    {
+      "id": "shift-103-today",
+      "employeeId": "emp-103",
+      "date": "2026-07-09",
+      "shiftType": "full_day",
+      "startTime": "08:30",
+      "endTime": "17:00",
+      "notes": "ແກ້ໄຂບັກລະບົບ HR"
+    },
+    {
+      "id": "shift-104-today",
+      "employeeId": "emp-104",
+      "date": "2026-07-09",
+      "shiftType": "full_day",
+      "startTime": "08:30",
+      "endTime": "17:00",
+      "notes": "ຕ້ອນຮັບລູກຄ້າ VIP"
+    },
+    {
+      "id": "shift-105-today",
+      "employeeId": "emp-105",
+      "date": "2026-07-09",
+      "shiftType": "full_day",
+      "startTime": "08:30",
+      "endTime": "17:00",
+      "notes": "ສຳພາດພະນັກງານໃໝ່"
+    },
+    {
+      "id": "shift-101-1",
+      "employeeId": "emp-101",
+      "date": "2026-07-08",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-102-1",
+      "employeeId": "emp-102",
+      "date": "2026-07-08",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-103-1",
+      "employeeId": "emp-103",
+      "date": "2026-07-08",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-104-1",
+      "employeeId": "emp-104",
+      "date": "2026-07-08",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-105-1",
+      "employeeId": "emp-105",
+      "date": "2026-07-08",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-103-2",
+      "employeeId": "emp-103",
+      "date": "2026-07-07",
+      "shiftType": "full_day"
+    },
+    {
+      "id": "shift-104-2",
+      "employeeId": "emp-104",
+      "date": "2026-07-07",
+      "shiftType": "full_day"
+    }
+  ],
+  "customLogo": null,
+  "hrUsername": "admin",
+  "hrPassword": "123456",
+  "deletedAttendanceIds": [],
+  "deletedEmployeeIds": [],
+  "enableAutoNotifications": true,
+  "enableQrCodeSystem": true,
+  "checkInStart": "07:30",
+  "checkInDeadline": "08:30",
+  "checkOutStart": "15:40",
+  "checkOutDeadline": "18:00",
+  "sentAutomatedNotifs": [],
+  "enableQrTimeRestriction": true
+}

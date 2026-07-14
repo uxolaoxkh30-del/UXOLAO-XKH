@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Phetsarath&family=Noto+Sans+Lao:wght@400;750&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Phetsarath", "Phetsarath OT", "Noto Sans Lao", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Times New Roman", ui-serif, Georgia, serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
