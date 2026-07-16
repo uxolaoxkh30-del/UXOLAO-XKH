@@ -24,6 +24,17 @@ interface HomeLandingProps {
 }
 
 export function HomeLanding({ onNavigate, onOpenMobileGuide, employeeCount, todayCheckInCount }: HomeLandingProps) {
+  const [isBlockedDomain, setIsBlockedDomain] = React.useState(false);
+  const [currentHostname, setCurrentHostname] = React.useState('');
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const host = window.location.hostname;
+      setCurrentHostname(host);
+      setIsBlockedDomain(host.includes('run.app'));
+    }
+  }, []);
+
   return (
     <div className="space-y-12 py-4 animate-fade-in">
       {/* Hero Banner Section */}
@@ -92,26 +103,45 @@ export function HomeLanding({ onNavigate, onOpenMobileGuide, employeeCount, toda
       </div>
 
       {/* Access Warning / Mobile Network Notice */}
-      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-3xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-sm">
+      <div className={`border rounded-3xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-sm ${
+        isBlockedDomain 
+          ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-900 dark:text-slate-100" 
+          : "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-950 dark:text-slate-100"
+      }`}>
         <div className="flex gap-4">
-          <div className="p-3 bg-amber-500 text-white rounded-2xl flex-shrink-0 shadow-sm self-start">
-            <HelpCircle className="w-6 h-6 animate-pulse" />
+          <div className={`p-3 text-white rounded-2xl flex-shrink-0 shadow-sm self-start ${
+            isBlockedDomain ? "bg-amber-500" : "bg-emerald-500"
+          }`}>
+            {isBlockedDomain ? <HelpCircle className="w-6 h-6 animate-pulse" /> : <ShieldCheck className="w-6 h-6" />}
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm sm:text-base font-extrabold text-amber-900 dark:text-amber-400 font-sans">
-              ມີບັນຫາໃນການເປີດເວັບໄຊ້ໃນໂທລະສັບມືຖື ຫຼື ບໍ່?
+            <h3 className="text-sm sm:text-base font-extrabold font-sans">
+              {isBlockedDomain 
+                ? "📱 ວິທີແກ້ໄຂເປີດລິ້ງໃນມືຖື ແລະ ຄອມພິວເຕີ ໃນລາວ (LTC, Unitel, TPlus)" 
+                : "🎉 ລະບົບພ້ອມໃຊ້ງານ 100% ຜ່ານທຸກເຄືອຂ່າຍໃນລາວ!"}
             </h3>
-            <p className="text-xs text-amber-800 dark:text-slate-400 leading-relaxed font-sans max-w-2xl">
-              ເຄືອຂ່າຍມືຖືໃນລາວ (LTC, Unitel, TPlus) ບາງຄັ້ງອາດຈະບລັອກຊື່ໂດເມນ <code className="bg-amber-500/10 px-1 py-0.5 rounded font-mono text-amber-600 dark:text-amber-400 font-bold">.run.app</code>. 
-              ເພື່ອແກ້ໄຂແບບຖາວອນ, ທ່ານໄດ້ເຊື່ອມຕໍ່ໄປຫາ <strong>lao-hr-attendance.vercel.app</strong> ແລ້ວ! ຫາກໂທລະສັບບາງເຄື່ອງຍັງເຂົ້າບໍ່ໄດ້, ອາດຈະເກີດຈາກ Cache ຂອງບຣາວເຊີ ຫຼື ເນັດຍັງຈຳ IP ເກົ່າ. ກະລຸນາກົດປຸ່ມດ້ານຂວາເພື່ອເບິ່ງວິທີແກ້ໄຂດ່ວນ!
+            <p className="text-xs leading-relaxed font-sans max-w-2xl text-slate-700 dark:text-slate-300">
+              {isBlockedDomain ? (
+                <>
+                  ເຄືອຂ່າຍມືຖືໃນລາວ (LTC, Unitel, TPlus) ມີບັນຫາ <strong>DNS Block</strong> ກັບໂດເມນ <code className="bg-amber-500/15 px-1 py-0.5 rounded font-mono text-amber-700 dark:text-amber-400 font-bold">.run.app</code> ຂອງ Google Cloud ໂດຍກົງ. ເພື່ອໃຫ້ພະນັກງານເປີດໄດ້ 100% ໂດຍບໍ່ຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນ DNS, ກະລຸນາກົດປຸ່ມດ້ານຂວາເພື່ອເບິ່ງຄູ່ມືການຕິດຕັ້ງໂດເມນສ່ວນຕົວຟຣີ!
+                </>
+              ) : (
+                <>
+                  ຍິນດີດ້ວຍ! ທ່ານກຳລັງເຂົ້າໃຊ້ງານຜ່ານໂດເມນປົດບລັອກ <strong className="text-emerald-600 dark:text-emerald-400 font-extrabold">{currentHostname}</strong> ແລ້ວ. ພະນັກງານທຸກຄົນສາມາດເປີດແອັບນີ້ໃນ Chrome & Safari ໄດ້ໂດຍກົງ ໂດຍບໍ່ຈຳເປັນຕ້ອງມີ VPN ຫຼື ປ່ຽນຄ່າ DNS ໃດໆທັງສິ້ນ!
+                </>
+              )}
             </p>
           </div>
         </div>
         <button
           onClick={onOpenMobileGuide}
-          className="w-full md:w-auto text-center px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold font-sans rounded-2xl transition-all shadow-md cursor-pointer whitespace-nowrap"
+          className={`w-full md:w-auto text-center px-6 py-3 text-white text-xs font-bold font-sans rounded-2xl transition-all shadow-md cursor-pointer whitespace-nowrap ${
+            isBlockedDomain 
+              ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/10" 
+              : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
+          }`}
         >
-          📱 ເບິ່ງວິທີແກ້ໄຂເປີດລິ້ງໃນມືຖື
+          {isBlockedDomain ? "📱 ເບິ່ງວິທີປົດບລັອກ & ແກ້ໄຂ" : "⚙️ ຕັ້ງຄ່າ / ເບິ່ງຄູ່ມືເພີ່ມເຕີມ"}
         </button>
       </div>
 

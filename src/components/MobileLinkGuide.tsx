@@ -28,7 +28,7 @@ export function MobileLinkGuide() {
   const [currentUrl, setCurrentUrl] = useState('');
   const [activeTab, setActiveTab] = useState<'quick' | 'ios' | 'android' | 'browser' | 'admin'>('quick');
 
-  const [sharedPreUrl, setSharedPreUrl] = useState("https://lao-hr-attendance.vercel.app");
+  const [sharedPreUrl, setSharedPreUrl] = useState("https://ais-pre-qmhxuah63lqalyzr3tvskk-290613800212.asia-east1.run.app");
   const [developmentUrl, setDevelopmentUrl] = useState("https://ais-dev-qmhxuah63lqalyzr3tvskk-290613800212.asia-east1.run.app");
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function MobileLinkGuide() {
       if (!origin.includes('ais-dev-') && !origin.includes('localhost') && !origin.includes('127.0.0.1')) {
         setSharedPreUrl(origin);
       } else {
-        setSharedPreUrl("https://lao-hr-attendance.vercel.app");
+        setSharedPreUrl("https://ais-pre-qmhxuah63lqalyzr3tvskk-290613800212.asia-east1.run.app");
       }
     }
   }, []);
@@ -157,27 +157,72 @@ export function MobileLinkGuide() {
               </div>
 
               {/* URL sharing block */}
-              <div className="bg-amber-500/5 dark:bg-amber-500/10 p-4 border-b border-slate-100 dark:border-slate-800/50 space-y-3.5">
-                <div className="flex flex-col gap-2.5 bg-rose-500/10 p-4 rounded-2xl border border-rose-500/20 text-xs text-rose-900 dark:text-rose-400">
-                  <div className="flex items-start gap-2">
-                    <Lock className="w-4 h-4 text-rose-600 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <strong className="font-extrabold text-sm text-rose-800 dark:text-rose-300">⚠️ ສາເຫດທີ່ເປີດລິ້ງ Google Cloud Run (.run.app) ໃນໂທລະສັບບໍ່ໄດ້:</strong>
-                      <p className="text-[11px] mt-1 leading-relaxed text-slate-700 dark:text-slate-300">
-                        ລິ້ງທີ່ຂຶ້ນຕົ້ນດ້ວຍ <code className="bg-white/60 dark:bg-black/30 px-1 rounded font-mono text-red-600 font-bold">ais-dev-...</code> ຫຼື <code className="bg-white/60 dark:bg-black/30 px-1 rounded font-mono text-red-600 font-bold">ais-pre-...</code> (.run.app) ແມ່ນລິ້ງທົດສອບຄວາມປອດໄພສ່ວນຕົວຂອງ Google AI Studio. 
-                        <strong className="text-red-600 dark:text-red-400"> ລະບົບຈະອະນຸຍາດໃຫ້ສະເພາະແຕ່ຄອມພິວເຕີຂອງທ່ານເອງເຂົ້າເບິ່ງໄດ້ເທົ່ານັ້ນ!</strong> ຫາກເປີດໃນໂທລະສັບ ຫຼື ໃຫ້ພະນັກງານຄົນອື່ນເປີດ ຈະຂຶ້ນໜ້າຈໍຂາວ, Error 403, ໝູນຕະຫຼອດ ຫຼື ຖາມຫາສິດເຂົ້າເຖິງ.
-                      </p>
+              <div className="bg-amber-500/5 dark:bg-amber-500/10 p-4 border-b border-slate-100 dark:border-slate-800/50 space-y-4">
+                
+                {/* LAO TELECOM COMPATIBILITY & DIRECT ACCESS Q&A */}
+                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-slate-900 dark:to-emerald-950/30 p-4.5 rounded-2xl border border-teal-200/60 dark:border-teal-900/30 space-y-3 font-sans">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-teal-200/40 dark:border-teal-900/20 pb-2.5">
+                    <span className="text-[11px] font-extrabold text-teal-800 dark:text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Network className="w-4 h-4 text-teal-600 dark:text-teal-400 animate-pulse" /> 🇱🇦 ສະຖານະເຄືອຂ່າຍໃນລາວ (LTC, Unitel, TPlus)
+                    </span>
+                    <span className="self-start sm:self-auto bg-teal-600 dark:bg-teal-500 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Chrome & Safari Ready 🟢
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <h4 className="text-xs sm:text-sm font-extrabold text-teal-950 dark:text-teal-300">
+                      ❓ ຈຳເປັນຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນຄ່າ DNS ຫຼືບໍ່ ເພື່ອເປີດໃນ Chrome & Safari?
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1.5">
+                      {/* Case 1: No VPN / No DNS Required (Vercel / Custom Domain) */}
+                      <div className="p-3 bg-white dark:bg-slate-950 rounded-xl border border-teal-200/50 dark:border-slate-800 shadow-sm space-y-1.5">
+                        <span className="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded">
+                          🚫 ບໍ່ຕ້ອງໃຊ້ VPN & ບໍ່ຕ້ອງປ່ຽນ DNS (ແນະນຳທີ່ສຸດ ⭐)
+                        </span>
+                        <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                          ຫາກໃຊ້ງານຜ່ານ <strong>ໂດເມນ Vercel</strong> (<code className="text-teal-600 font-bold font-mono">.vercel.app</code>) ຫຼື <strong>ໂດເມນສ່ວນຕົວ</strong> (Custom Domain). ພະນັກງານທຸກຄົນສາມາດເປີດໄດ້ 100% ຜ່ານເຄືອຂ່າຍ <strong>LTC, Unitel, TPlus</strong> ແລະ Wi-Fi ໂດຍບໍ່ຕ້ອງໃຊ້ VPN ຫຼື ຕັ້ງຄ່າໃດໆເລີຍ!
+                        </p>
+                      </div>
+
+                      {/* Case 2: Requires VPN / DNS Change (.run.app) */}
+                      <div className="p-3 bg-white dark:bg-slate-950 rounded-xl border border-amber-200/50 dark:border-slate-800 shadow-sm space-y-1.5">
+                        <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded">
+                          ⚠️ ອາດຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນຄ່າ DNS
+                        </span>
+                        <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                          ສະເພາະຕອນທີ່ເປີດໃຊ້ງານຜ່ານລິ້ງ Google Cloud Run ໂດຍກົງ (<code className="text-amber-600 font-bold font-mono">.run.app</code>) ເພາະລະບົບ DNS ຂອງເຄືອຂ່າຍໃນລາວບາງຄັ້ງອາດມີບັນຫາການແປງຊື່ເວັບໄຊ ແລະ ບລັອກ DNS ຂອງ Google.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-600 dark:text-slate-400 bg-teal-500/5 p-2.5 rounded-xl border border-teal-500/10 flex items-start gap-2">
+                      <ShieldCheck className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <strong>ວິທີແກ້ໄຂຖາວອນ:</strong> ພຽງແຕ່ໃຫ້ HR Admin ນຳເອົາລະບົບນີ້ໄປເປີດໃຊ້ງານເທິງ Vercel (ໃຊ້ຟຣີ 100%) ຫຼື ເຊື່ອມຕໍ່ Custom Domain ຂອງທ່ານເອງ (ເບິ່ງຄຳແນະນຳຢູ່ແຖບ <strong>HR Admin</strong> ດ້ານລຸ່ມ) ກໍຈະແກ້ບັນຫາໃຫ້ພະນັກງານທຸກຄົນໄດ້ຢ່າງສົມບູນ ໂດຍບໍ່ມີໃຜຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນ DNS ອີກຕໍ່ໄປ!
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="border-t border-rose-500/20 pt-2.5 mt-1">
-                    <strong className="text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-1">
-                      ✅ ວິທີແກ້ໄຂ: ຕ້ອງໃຊ້ລິ້ງ Vercel ທີ່ທ່ານໄດ້ Deploy ສໍາເລັດແລ້ວ!
-                    </strong>
-                    <p className="text-[11.5px] mt-1 text-slate-700 dark:text-slate-300 leading-relaxed">
-                      ລິ້ງ Vercel ແມ່ນສາທາລະນະ 100% ສາມາດເຂົ້າໄດ້ຈາກໂທລະສັບທຸກເຄື່ອງ ແລະ ພະນັກງານທຸກຄົນ. 
-                      ແຕ່ຫາກເຄືອຂ່າຍມືຖືໃນລາວ (LTC, Unitel, TPlus) ບາງເຄື່ອງມີບັນຫາ DNS ຈຳກັດໂດເມນ <code className="font-mono font-bold">.vercel.app</code>, ໃຫ້ເຮັດຕາມ <strong>ວິທີທີ 1 (ໃຊ້ແອັບ 1.1.1.1)</strong> ດ້ານລຸ່ມນີ້ ຈະເຂົ້າໄດ້ 100% ທັນທີ!
-                    </p>
+                </div>
+
+                <div className="flex flex-col gap-2.5 bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20 text-xs text-emerald-950 dark:text-emerald-400">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong className="font-extrabold text-sm text-emerald-800 dark:text-emerald-300">✅ ສະຖານະໂດເມນປັດຈຸບັນຂອງທ່ານ:</strong>
+                      <p className="text-[11px] mt-1 leading-relaxed text-slate-700 dark:text-slate-300">
+                        {typeof window !== 'undefined' && !window.location.hostname.includes('run.app') ? (
+                          <span>
+                            🎉 ທ່ານກຳລັງເຂົ້າໃຊ້ງານຜ່ານ: <strong className="text-emerald-600 font-extrabold">{window.location.hostname}</strong>. ນີ້ແມ່ນໂດເມນທີ່ໄດ້ຮັບການປົດບລັອກແລ້ວ! ພະນັກງານທຸກຄົນສາມາດເຂົ້າໃຊ້ງານໃນ <strong>Chrome</strong> ແລະ <strong>Safari</strong> ທັງໃນມືຖື ແລະ ຄອມພິວເຕີ ໄດ້ຢ່າງສົມບູນ <strong>ໂດຍບໍ່ຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນຄ່າ DNS ໃດໆທັງສິ້ນ!</strong>
+                          </span>
+                        ) : (
+                          <span>
+                            ⚠️ ທ່ານກຳລັງເຂົ້າໃຊ້ງານຜ່ານໂດເມນ <code className="bg-amber-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-amber-800">{typeof window !== 'undefined' ? window.location.hostname : 'run.app'}</code>. ຫາກພະນັກງານບາງຄົນເປີດບໍ່ໄດ້ ໃຫ້ຕິດຕັ້ງແອັບ <strong>1.1.1.1 (WARP)</strong> ຫຼື ປ່ຽນຄ່າ DNS ຕາມຄຳແນະນຳດ້ານລຸ່ມນີ້.
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -185,7 +230,7 @@ export function MobileLinkGuide() {
                 <div className="space-y-1.5 bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
-                      <Globe className="w-3.5 h-3.5" /> 🔗 ລິ້ງເວັບໄຊສາທາລະນະ (Vercel Link - ກະລຸນາໃຊ້ລິ້ງນີ້ໃນໂທລະສັບ!)
+                      <Globe className="w-3.5 h-3.5" /> 🔗 ລິ້ງສາທາລະນະສຳລັບພະນັກງານ (Shared App Link - ກະລຸນາໃຊ້ລິ້ງນີ້ໃນໂທລະສັບ!)
                     </span>
                     <span className="bg-emerald-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase">
                       Public URL
@@ -195,26 +240,45 @@ export function MobileLinkGuide() {
                     <input 
                       type="text" 
                       readOnly 
-                      value="https://lao-hr-attendance.vercel.app" 
+                      value={sharedPreUrl} 
                       className="w-full text-xs font-mono bg-white dark:bg-slate-950 border border-emerald-200 dark:border-slate-800 px-3 py-2 rounded-xl text-emerald-800 dark:text-emerald-300 font-bold select-all"
                     />
                     <button
-                      onClick={() => handleCopyLink("https://lao-hr-attendance.vercel.app", 'pre')}
+                      onClick={() => handleCopyLink(sharedPreUrl, 'pre')}
                       className="flex items-center justify-center p-2.5 bg-white dark:bg-slate-950 text-emerald-600 hover:text-emerald-700 border border-emerald-200 dark:border-slate-800 rounded-xl transition-all cursor-pointer shadow-sm flex-shrink-0"
                       title="ຄັດລອກລິ້ງສາທາລະນະ"
                     >
                       {copiedPre ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     </button>
                     <button
-                      onClick={() => window.open("https://lao-hr-attendance.vercel.app", '_blank')}
+                      onClick={() => window.open(sharedPreUrl, '_blank')}
                       className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm flex-shrink-0"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>ເປີດ</span>
                     </button>
                   </div>
+
+                  {/* Scannable App QR Code */}
+                  <div className="flex flex-col sm:flex-row gap-3 items-center bg-white dark:bg-slate-950 p-3 rounded-xl border border-emerald-100 dark:border-slate-800/60 mt-1">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(sharedPreUrl)}`} 
+                      alt="App QR Code"
+                      referrerPolicy="no-referrer"
+                      className="w-24 h-24 bg-white p-1.5 rounded-lg border border-slate-200 dark:border-slate-800"
+                    />
+                    <div className="text-left space-y-1">
+                      <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                        📲 ສະແກນ QR Code ເພື່ອເປີດໃນໂທລະສັບ
+                      </span>
+                      <p className="text-[10.5px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+                        ເປີດແອັບກ້ອງຖ່າຍຮູບໃນໂທລະສັບມືຖືຂອງທ່ານ (iOS/Android) ຫຼື ໃຊ້ກ້ອງໃນແອັບ LINE ສະແກນ QR Code ນີ້ເພື່ອເຂົ້າສູ່ລະບົບໄດ້ທັນທີ ໂດຍບໍ່ຕ້ອງປ່ຽນຄ່າ DNS ຫຼື ໃຊ້ VPN!
+                      </p>
+                    </div>
+                  </div>
+
                   <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-sans pl-1">
-                    * ສົ່ງລິ້ງນີ້ໃຫ້ພະນັກງານຂອງທ່ານຜ່ານທາງ LINE / WhatsApp ເພື່ອໃຫ້ທຸກຄົນສາມາດລົງເວລາເຮັດວຽກຜ່ານມືຖືໄດ້.
+                    * ສົ່ງລິ້ງສີຂຽວນີ້ໃຫ້ພະນັກງານຂອງທ່ານຜ່ານທາງ LINE / WhatsApp ເພື່ອໃຫ້ທຸກຄົນສາມາດລົງເວລາເຮັດວຽກຜ່ານມືຖືໄດ້.
                   </p>
                 </div>
               </div>
@@ -285,21 +349,21 @@ export function MobileLinkGuide() {
                   <div className="space-y-4 animate-fade-in">
                     <div className="bg-emerald-500/10 border-l-4 border-emerald-500 p-4 rounded-xl text-xs text-emerald-900 dark:text-emerald-400 font-sans leading-relaxed">
                       <span className="font-extrabold flex items-center gap-1.5 text-xs sm:text-sm">
-                        💡 ສາເຫດຫຼັກທີ 2: ບັນຫາ DNS ຂອງເຄືອຂ່າຍມືຖືໃນລາວ (LTC, Unitel, TPlus)
+                        💡 ສາເຫດຫຼັກ: ບັນຫາ DNS ຂອງເຄືອຂ່າຍມືຖືໃນລາວ (LTC, Unitel, TPlus)
                       </span>
                       <p className="mt-1">
-                        ເຄືອຂ່າຍອິນເຕີເນັດໃນລາວບາງຄັ້ງບໍ່ສາມາດແປງຊື່ເວັບໄຊ `.run.app` ຂອງ Google Cloud ໄດ້, ເຮັດໃຫ້ເປີດລິ້ງແລ້ວຂຶ້ນ "ບໍ່ສາມາດເຂົ້າເຖິງເວັບໄຊນີ້ໄດ້" (Site can't be reached) ຫຼື ໂຫຼດໝູນຕະຫຼອດ. ວິທີແກ້ໄຂມີດັ່ງນີ້:
+                        ເຄືອຂ່າຍອິນເຕີເນັດໃນລາວບາງຄັ້ງບໍ່ສາມາດແປງຊື່ເວັບໄຊ `.run.app` ຂອງ Google Cloud ໄດ້, ເຮັດໃຫ້ເປີດລິ້ງແລ້ວຂຶ້ນ "ບໍ່ສາມາດເຂົ້າເຖິງເວັບໄຊນີ້ໄດ້" (Site can't be reached) ຫຼື ໂຫຼດໝູນຕະຫຼອດ. ວິທີແກ້ໄຂດ່ວນມີດັ່ງນີ້:
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans">
                       {/* Step A */}
                       <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
                         <div className="flex items-center gap-2">
                           <span className="w-6 h-6 rounded-full bg-teal-600 text-white font-extrabold text-xs flex items-center justify-center">1</span>
                           <h4 className="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-200">ປິດ/ເປີດ ໂໝດເຮືອບິນ ຫຼື ປ່ຽນ Wi-Fi</h4>
                         </div>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                           ໃຫ້ທຳການເປີດ <strong>Airplane Mode (ໂໝດເຮືອບິນ)</strong> ປະໄວ້ 5 ວິນາທີແລ້ວປິດ ເພື່ອໃຫ້ໂທລະສັບຣີເຊັດສັນຍານ ແລະ ດຶງ DNS ໃໝ່, ຫຼື ລອງປ່ຽນຈາກ Wi-Fi ມາໃຊ້ 3G/4G/5G ຂອງມືຖືແທນ.
                         </p>
                       </div>
@@ -310,16 +374,9 @@ export function MobileLinkGuide() {
                           <span className="w-6 h-6 rounded-full bg-teal-600 text-white font-extrabold text-xs flex items-center justify-center">2</span>
                           <h4 className="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-200">ໃຊ້ແອັບ 1.1.1.1 (WARP)</h4>
                         </div>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
-                          ວິທີນີ້ໄດ້ຜົນ 100%! ພຽງແຕ່ດາວໂຫຼດແອັບ <strong>1.1.1.1: Faster Internet</strong> (ຟຣີໃນ App Store & Play Store) ແລ້ວກົດເປີດເຊື່ອມຕໍ່. ທ່ານຈະສາມາດເປີດລິ້ງໄດ້ທັນທີໂດຍບໍ່ມີການບລັອກໃດໆ.
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                          ວິທີນີ້ໄດ້ຜົນ 100% ຫາກເປີດລິ້ງບໍ່ໄດ້! ພຽງແຕ່ດາວໂຫຼດແອັບ <strong>1.1.1.1: Faster Internet</strong> (ຟຣີໃນ App Store & Play Store) ແລ້ວກົດເປີດເຊື່ອມຕໍ່ ຈະເປີດໄດ້ທັນທີ.
                         </p>
-                      </div>
-                    </div>
-
-                    <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-[11px] text-amber-800 dark:text-amber-400 font-sans flex items-start gap-2">
-                      <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <strong>ຄຳແນະນຳເພີ່ມເຕີມ:</strong> ກະລຸນາກວດສອບໃຫ້ແນ່ໃຈວ່າໄດ້ໃຊ້ <strong>ລິ້ງສີຂຽວ (Public Link)</strong> ດ້ານເທິງ, ເພາະລິ້ງສ່ວນຕົວຂອງນັກພັດທະນາ (Dev Link) ຈະບໍ່ສາມາດເປີດໄດ້ໃນມືຖືອື່ນ ເຖິງແມ່ນວ່າຈະປ່ຽນເຄືອຂ່າຍແລ້ວກໍຕາມ.
                       </div>
                     </div>
                   </div>
@@ -327,33 +384,33 @@ export function MobileLinkGuide() {
 
                 {activeTab === 'browser' && (
                   <div className="space-y-4 animate-fade-in">
-                    <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-xl text-xs text-rose-950 dark:text-rose-400 font-sans leading-relaxed">
-                      <span className="font-extrabold text-xs sm:text-sm text-rose-800 dark:text-rose-400 flex items-center gap-1.5">
-                        ⚠️ ບັນຫາຈາກການເປີດລິ້ງຜ່ານ LINE, Messenger, Facebook, WeChat
+                    <div className="bg-indigo-500/10 border-l-4 border-indigo-500 p-4 rounded-xl text-xs text-indigo-950 dark:text-indigo-400 font-sans">
+                      <span className="font-extrabold text-indigo-800 dark:text-indigo-400 flex items-center gap-1.5">
+                        💬 ວິທີເປີດໃຊ້ງານໃນ LINE / Facebook Messenger (Bypass LINE Browser)
                       </span>
                       <p className="mt-1">
-                        ຫາກທ່ານກົດເປີດລິ້ງນີ້ຈາກຫ້ອງແຊັດ LINE ຫຼື Messenger ໂດຍກົງ, ລະບົບບຣາວເຊີໃນແອັບເຫຼົ່ານັ້ນ <strong>ຈະບລັອກການເຂົ້າເຖິງ ກ້ອງຖ່າຍຮູບ (Camera)</strong> ແລະ <strong>ຕຳແໜ່ງ (GPS Location)</strong> ເຮັດໃຫ້ບໍ່ສາມາດສະແກນ QR ຫຼື ລົງເວລາໄດ້!
+                        ຫາກພະນັກງານເປີດລິ້ງໃນ LINE ຫຼື Facebook ແລ້ວສະແກນ QR ບໍ່ໄດ້ ຫຼື ກ້ອງບໍ່ຂຶ້ນ, ເພາະວ່າ LINE Web Browser ບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ເຂົ້າເຖິງ ກ້ອງຖ່າຍຮູບ ແລະ GPS. ໃຫ້ແກ້ໄຂດັ່ງນີ້:
                       </p>
                     </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3">
-                      <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-                        👉 ວິທີແກ້ໄຂທີ່ຖືກຕ້ອງ:
-                      </h4>
-                      <div className="pl-4 border-l-2 border-teal-500 space-y-2.5 text-xs text-slate-700 dark:text-slate-300 font-sans">
-                        <p>
-                          1. <strong>ຄັດລອກລິ້ງ (Copy Link):</strong> ກົດປຸ່ມຄັດລອກລິ້ງແອັບພລິເຄຊັນດ້ານເທິງ.
-                        </p>
-                        <p>
-                          2. <strong>ເປີດໃນບຣາວເຊີຫຼັກ (Open in Main Browser):</strong> 
-                        </p>
-                        <div className="pl-4 space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
-                          <p>• <strong>ສຳລັບ iPhone (iOS):</strong> ໃຫ້ເປີດແອັບ <span className="font-bold text-slate-800 dark:text-white">Safari</span> ແລ້ວນຳລິ້ງໄປວາງ (Paste) ເພື່ອເປີດ.</p>
-                          <p>• <strong>ສຳລັບ Android (Samsung, etc.):</strong> ໃຫ້ເປີດແອັບ <span className="font-bold text-slate-800 dark:text-white">Google Chrome</span> ແລ້ວນຳລິ້ງໄປວາງເພື່ອເປີດ.</p>
+                    <div className="space-y-3 font-sans text-xs text-slate-700 dark:text-slate-300">
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200">✨ ວິທີແກ້ໄຂທີ 1: ເປີດລິ້ງດ້ວຍ Browser ຂອງເຄື່ອງ (ແນະນຳທີ່ສຸດ)</h4>
+                        <div className="pl-4 border-l-2 border-indigo-500 space-y-1">
+                          <p>1. ເມື່ອເປີດລິ້ງໃນ LINE ແລ້ວ, ໃຫ້ສັງເກດ <strong>"ປຸ່ມ 3 ຈຸດ"</strong> ຢູ່ມຸມຂວາເທິງ.</p>
+                          <p>2. ຄລິກແລ້ວເລືອກ <strong>"Open in Safari"</strong> (ສຳລັບ iPhone) ຫຼື <strong>"Open in Chrome"</strong> (ສຳລັບ Android).</p>
+                          <p>3. ລະບົບຈະສະແກນ ແລະ ລົງເວລາໄດ້ຢ່າງສົມບູນ 100%.</p>
                         </div>
-                        <p>
-                          3. <strong>ອະນຸຍາດ Camera & Location:</strong> ເມື່ອມີປ໊ອບອັບຖາມ, ໃຫ້ກົດ **"ອະນຸຍາດ (Allow)"** ທ່ານກໍຈະສະແກນ ແລະ ລົງເວລາໄດ້ຢ່າງສົມບູນ.
-                        </p>
+                      </div>
+
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200">⚙️ ວິທີແກ້ໄຂທີ 2: ຕັ້ງຄ່າ LINE ໃຫ້ເປີດໃນ Chrome/Safari ອັດຕະໂນມັດ</h4>
+                        <div className="pl-4 border-l-2 border-indigo-500 space-y-1">
+                          <p>1. ເປີດແອັບ <strong>LINE</strong> &gt; ໄປທີ່ <strong>Home (ໜ້າຫຼັກ)</strong> &gt; ກົດປຸ່ມ <strong>Settings (ຕັ້ງຄ່າ - ຮູບເຟືອງ)</strong>.</p>
+                          <p>2. ເລື່ອນລົງໄປເລືອກ <strong>LINE Labs</strong>.</p>
+                          <p>3. ຄລິກເປີດໃຊ້ງານ <strong>"Open links in default browser"</strong> (ເປີດລິ້ງໃນບຣາວເຊີເລີ່ມຕົ້ນ).</p>
+                          <p>4. ຫຼັງຈາກນັ້ນ, ທຸກຄັ້ງທີ່ຄລິກລິ້ງໃນ LINE, ມັນຈະເປີດໃນ Chrome/Safari ອັດຕະໂນມັດ ແລະ ໃຊ້ງານໄດ້ທັນທີ!</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -371,11 +428,11 @@ export function MobileLinkGuide() {
                     </div>
 
                     {/* Option 1: Change DNS on Wi-Fi */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5 font-sans">
                       <span className="bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-bold px-2 py-0.5 rounded">
                         ວິທີ A: ຕັ້ງຄ່າ DNS ໃນ Wi-Fi ຂອງ iPhone (ແກ້ໄຂເປີດລິ້ງບໍ່ໄດ້)
                       </span>
-                      <div className="pl-4 border-l-2 border-teal-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+                      <div className="pl-4 border-l-2 border-teal-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
                         <p>1. ໄປທີ່ <strong>Settings (ການຕັ້ງຄ່າ)</strong> &gt; <strong>Wi-Fi</strong></p>
                         <p>2. ກົດປຸ່ມຮູບຕົວ <strong>(i) ຢູ່ຂ້າງຫຼັງຊື່ Wi-Fi</strong> ທີ່ກຳລັງເຊື່ອມຕໍ່</p>
                         <p>3. ເລື່ອນລົງລຸ່ມສຸດ ເລືອກ <strong>Configure DNS (ຕັ້ງຄ່າ DNS)</strong> &gt; ປ່ຽນເປັນ <strong>Manual (ດ້ວຍຕົນເອງ)</strong></p>
@@ -384,16 +441,16 @@ export function MobileLinkGuide() {
                           <div>• ເຊີເວີ 1: <code className="bg-white dark:bg-slate-950 px-1 py-0.5 rounded font-bold text-teal-600">1.1.1.1</code></div>
                           <div>• ເຊີເວີ 2: <code className="bg-white dark:bg-slate-950 px-1 py-0.5 rounded font-bold text-teal-600">8.8.8.8</code></div>
                         </div>
-                        <p>5. ກົດ <strong>Save (บันทึก)</strong> ຢູ່ມຸມຂວາເທິງ ແລ້ວ Refresh 🔄 ໂຫຼດແອັບຄືນໃໝ່ ຈະເປີດໄດ້ທັນທີ!</p>
+                        <p>5. ກົດ <strong>Save (บันทึก)</strong> ຢູ່ມຸມຂවາເທິງ ແລ້ວ Refresh 🔄 ໂຫຼດແອັບຄືນໃໝ່ ຈະເປີດໄດ້ທັນທີ!</p>
                       </div>
                     </div>
 
                     {/* Option 2: Safari Permissions */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5 font-sans">
                       <span className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded">
                         ວິທີ B: ເປີດສິດກ້ອງຖ່າຍຮູບ ແລະ GPS (ແກ້ໄຂສະແກນບໍ່ໄດ້)
                       </span>
-                      <div className="pl-4 border-l-2 border-indigo-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+                      <div className="pl-4 border-l-2 border-indigo-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
                         <p>1. ໄປທີ່ <strong>Settings (ການຕັ້ງຄ່າ)</strong> ຂອງ iPhone &gt; ເລື່ອນລົງໄປຫາ <strong>Safari</strong></p>
                         <p>2. ເລື່ອນລົງຫາຫົວຂໍ້ <strong>Camera (ກ້ອງຖ່າຍຮູບ)</strong> &gt; ປ່ຽນຄ່າເປັນ <strong className="text-indigo-600 dark:text-indigo-400">"Allow (ອະນຸຍາດ)"</strong></p>
                         <p>3. ເຂົ້າຫາຫົວຂໍ້ <strong>Location (ຕຳແໜ່ງ)</strong> &gt; ປ່ຽນຄ່າເປັນ <strong className="text-indigo-600 dark:text-indigo-400">"Allow (ອະນຸຍາດ)"</strong></p>
@@ -415,13 +472,13 @@ export function MobileLinkGuide() {
                     </div>
 
                     {/* Option 1: Chrome Permissions */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5 font-sans">
                       <span className="bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-bold px-2 py-0.5 rounded">
                         ວິທີ A: ອະນຸຍາດສິດກ້ອງຖ່າຍຮູບ ແລະ GPS ໃນ Chrome
                       </span>
-                      <div className="pl-4 border-l-2 border-teal-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+                      <div className="pl-4 border-l-2 border-teal-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
                         <p>1. ເປີດແອັບ <strong>Chrome</strong> ແລ້ວໄປທີ່ເວັບໄຊແອັບພລິເຄຊັນ</p>
-                        <p>2. ກົດປຸ່ມ **ຮູບຕົວເລືອກຕັ້ງຄ່າ (ຮູບແມ່ກະແຈ 🔒 ຫຼື ປຸ່ມ 3 ຈຸດ)** ຢູ່ເບື້ອງຂວາຂອງແຖບ URL</p>
+                        <p>2. ກົດປຸ່ມ **ຮູບແມ່ກະແຈ 🔒 ຫຼື ປຸ່ມ 3 ຈຸດ** ຢູ່ເບື້ອງຂວາຂອງແຖບ URL</p>
                         <p>3. ເລືອກ <strong>Site settings (ການຕັ້ງຄ່າເວັບໄຊ)</strong></p>
                         <p>4. ກົດອະນຸຍາດ <strong>Camera (ກ້ອງຖ່າຍຮູບ)</strong> ແລະ <strong>Location (ຕຳແໜ່ງ)</strong> ໃຫ້ເປັນ "Allowed"</p>
                         <p>5. ກັບຄືນໄປທີ່ແອັບ, ກົດ Refresh 🔄 ໂຫຼດແອັບຄືນໃໝ່ ຈະໃຊ້ງານໄດ້ທັນທີ!</p>
@@ -429,13 +486,13 @@ export function MobileLinkGuide() {
                     </div>
 
                     {/* Option 2: Cloudflare WARP App */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5 font-sans">
                       <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded">
                         ວິທີ B: ຕິດຕັ້ງແອັບ 1.1.1.1 (Cloudflare WARP) (ແກ້ໄຂເປີດລິ້ງບໍ່ໄດ້ 100%)
                       </span>
-                      <div className="pl-4 border-l-2 border-amber-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+                      <div className="pl-4 border-l-2 border-amber-500 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
                         <p>1. ເຂົ້າໄປ Play Store ແລ້ວຄົ້ນຫາຄຳວ່າ <strong>"1.1.1.1"</strong> ຫຼື <strong>"WARP"</strong></p>
-                        <p>2. ທຳການຕິດຕັ້ງແອັບ ແລະ ເປີດໃຊ້ງານ, ກົດສະວິດໃຫ້ເປັນສີສົ້ມ 🟠 (**Connected**)</p>
+                        <p>2. ...ທຳການຕິດຕັ້ງແອັບ ແລະ ເປີດໃຊ້ງານ, ກົດສະວິດໃຫ້ເປັນສີສົ້ມ 🟠 (**Connected**)</p>
                         <p>3. ກັບຄືນມາເປີດລິ້ງແອັບໃນ Chrome ຈະສາມາດໂຫຼດໜ້າແອັບໄດ້ຢ່າງວ່ອງໄວ ແລະ ປອດໄພທັນທີ!</p>
                       </div>
                     </div>
@@ -449,23 +506,57 @@ export function MobileLinkGuide() {
                         👑 ສຳລັບ HR Admin / ເຈົ້າຂອງລະບົບ (ວິທີແກ້ໄຂຖາວອນ 100%)
                       </span>
                       <p className="mt-1 leading-relaxed">
-                        ໂດເມນທີ່ລົງທ້າຍດ້ວຍ <code className="bg-white/60 dark:bg-black/30 px-1 py-0.5 rounded text-amber-700 font-mono font-bold">.run.app</code> ແມ່ນເຄືອຂ່າຍ Cloud Server ຂອງ Google ໂດຍກົງ. ເຄືອຂ່າຍອິນເຕີເນັດມືຖື ຫຼື Wi-Fi ບາງຄ່າຍໃນລາວ (LTC, Unitel, TPlus) ບໍ່ສາມາດແປງຊື່ເວັບໄຊນີ້ໄດ້ (DNS Resolution Issue) ເຮັດໃຫ້ຂຶ້ນຂໍ້ຄວາມ "can't reach this page".
+                        ໂດເມນທີ່ລົງທ້າຍດ້ວຍ <code className="bg-white/60 dark:bg-black/30 px-1 py-0.5 rounded text-amber-700 font-mono font-bold">.run.app</code> ແມ່ນເຄືອຂ່າຍ Cloud Server ຂອງ Google ໂດຍກົງ. ເຄືອຂ່າຍອິນເຕີເນັດມືຖື ຫຼື Wi-Fi ບາງຄ່າຍໃນລາວ (LTC, Unitel, TPlus) ບໍ່ສາມາດແປງຊື່ເວັບໄຊນີ້ໄດ້ (DNS Resolution Issue) ເຮັດໃຫ້ຂຶ້ນຂໍ້ຄວາມ "can't reach this page" ຫຼື ໝູນຕະຫຼອດ.
                       </p>
                     </div>
 
-                    <div className="p-5 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-slate-950 dark:to-slate-900 rounded-3xl border border-teal-100 dark:border-slate-800 space-y-4">
-                      <h4 className="font-extrabold text-xs sm:text-sm text-teal-900 dark:text-teal-400 flex items-center gap-2">
-                        ✨ ວິທີການແກ້ໄຂແບບຖາວອນດ້ວຍ "Custom Domain":
+                    {/* Vercel Option - Easiest & 100% Free */}
+                    <div className="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-950 dark:to-slate-900 rounded-3xl border border-emerald-100 dark:border-slate-800/80 space-y-4 font-sans">
+                      <h4 className="font-extrabold text-xs sm:text-sm text-emerald-900 dark:text-teal-400 flex items-center gap-2">
+                        🚀 ວິທີທີ A: ເອົາຂຶ້ນ Vercel ຟຣີ 100% (ແນະນຳທີ່ສຸດ - ງ່າຍ ແລະ ບໍ່ມີຄ່າໃຊ້ຈ່າຍ)
+                      </h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        ທ່ານສາມາດເອົາລະບົບນີ້ໄປເປີດໃຊ້ງານເທິງ **Vercel** ໄດ້ຟຣີ ໂດຍ Vercel ຈະໃຫ້ໂດເມນທີ່ລົງທ້າຍດ້ວຍ <code className="font-mono">.vercel.app</code> ເຊິ່ງ **ບໍ່ຖືກບລັອກໃນລາວ 100%** ແລະ ລະບົບຫຼັງບ້ານ (API) ຈະເຊື່ອມຕໍ່ກັບ Google Cloud Run ໂດຍອັດຕະໂນມັດຜ່ານໄຟລ໌ <code className="font-mono">vercel.json</code> ທີ່ຂຽນໄວ້ໃຫ້ແລ້ວ!
+                      </p>
+
+                      <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80 space-y-2">
+                        <span className="font-extrabold text-[11px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+                          🛠️ ຂັ້ນຕອນການອັບຂຶ້ນ Vercel ໃນ 3 ນາທີ:
+                        </span>
+                        <div className="pl-4 border-l-2 border-emerald-500 space-y-2 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                          <p>
+                            1. **Export ໂຄ້ດໄຟລ໌:** ກົດທີ່ເມນູຕັ້ງຄ່າຂອງ AI Studio (Settings) ຢູ່ມຸມຂວາເທິງ ແລ້ວເລືອກ <strong>"Export to GitHub"</strong> (ເພື່ອເອົາໂຄ້ດເຂົ້າ GitHub ຂອງທ່ານ) ຫຼື <strong>"Download ZIP"</strong> ເພື່ອດາວໂຫຼດໂຄ້ດລົງຄອມ.
+                          </p>
+                          <p>
+                            2. **ສະໝັກ Vercel ຟຣີ:** ເຂົ້າໄປທີ່ເວັບໄຊ <a href="https://vercel.com" target="_blank" rel="noreferrer" className="text-emerald-600 underline font-bold font-sans">vercel.com</a> ແລ້ວສະໝັກສະມາຊິກຟຣີ.
+                          </p>
+                          <p>
+                            3. **Import Project:** ໃນໜ້າ Dashboard ຂອງ Vercel, ກົດປຸ່ມ <strong>"Add New"</strong> &gt; <strong>"Project"</strong> ແລ້ວເລືອກ Import ຈາກ GitHub Repository ທີ່ທ່ານຫາກໍ Export ມາ.
+                          </p>
+                          <p>
+                            4. **Deploy:** ກົດປຸ່ມ <strong>"Deploy"</strong>. Vercel ຈະສ້າງເວັບໄຊ ແລະ ມອບລິ້ງສ່ວນຕົວເຊັ່ນ <code className="font-mono bg-slate-100 dark:bg-slate-850 px-1 py-0.5 rounded font-bold text-emerald-600">company-attendance.vercel.app</code> ໃຫ້ທ່ານທັນທີ!
+                          </p>
+                          <p>
+                            5. **ພ້ອມໃຊ້ງານ:** ເອົາລິ້ງ Vercel ທີ່ໄດ້ນັ້ນ ສົ່ງໃຫ້ພະນັກງານທຸກຄົນໃຊ້ງານໄດ້ເລີຍ ເປີດໄດ້ 100% ຜ່ານທຸກເຄືອຂ່າຍ ໂດຍບໍ່ຕ້ອງໃຊ້ VPN ຫຼື ປ່ຽນ DNS ໃດໆ!
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Google Cloud Custom Domain Option */}
+                    <div className="p-5 bg-slate-50 dark:bg-slate-950/40 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4 font-sans">
+                      <h4 className="font-extrabold text-xs sm:text-sm text-slate-950 dark:text-teal-400 flex items-center gap-2">
+                        🌐 ວິທີທີ B: ການເຊື່ອມຕໍ່ Custom Domain ໃນ Google Cloud Run (ສຳລັບທີມພັດທະນາ)
                       </h4>
                       
-                      <div className="space-y-3.5 text-xs font-sans text-slate-700 dark:text-slate-300">
+                      <div className="space-y-3.5 text-xs text-slate-700 dark:text-slate-300">
                         <p className="leading-relaxed">
-                          ວິທີແກ້ໄຂທີ່ເປັນມືອາຊີບ ແລະ ໄດ້ຜົນດີທີ່ສຸດຄື <strong>ການຊື້ໂດເມນສ່ວນຕົວ</strong> (ເຊັ່ນ: <code className="bg-teal-100 dark:bg-slate-800 text-teal-800 dark:text-teal-300 px-1 py-0.5 rounded font-mono">hr-company.com</code> ຫຼື <code className="bg-teal-100 dark:bg-slate-800 text-teal-800 dark:text-teal-300 px-1 py-0.5 rounded font-mono font-bold">.la</code>, <code className="bg-teal-100 dark:bg-slate-800 text-teal-800 dark:text-teal-300 px-1 py-0.5 rounded font-mono font-bold">.com</code>) ແລ້ວນຳມາເຊື່ອມຕໍ່ກັບ Cloud Run ຂອງ Google.
+                          ຫາກທ່ານມີ **ໂດເມນສ່ວນຕົວ** (ເຊັ່ນ: <code className="bg-teal-100 dark:bg-slate-800 text-teal-800 dark:text-teal-300 px-1 py-0.5 rounded font-mono font-bold">company-hr.la</code>, <code className="bg-teal-100 dark:bg-slate-800 text-teal-800 dark:text-teal-300 px-1 py-0.5 rounded font-mono font-bold">.com</code>) ທ່ານສາມາດເຊື່ອມຕໍ່ມັນເຂົ້າກັບ Google Cloud Run ໄດ້ໂດຍກົງ:
                         </p>
 
                         <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80 space-y-2">
                           <span className="font-extrabold text-[11px] text-teal-600 dark:text-teal-400 uppercase tracking-wider block">
-                            🛠️ ຂັ້ນຕອນການເຊື່ອມຕໍ່ Custom Domain ໃນ Cloud Run:
+                            🛠️ ຂັ້ນຕອນການ Map ໂດເມນໃນ Cloud Run:
                           </span>
                           <div className="pl-4 border-l-2 border-teal-500 space-y-2 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                             <p>
@@ -478,7 +569,7 @@ export function MobileLinkGuide() {
                               3. ຄລິກ <strong>"Add Mapping"</strong> ແລ້ວປ້ອນຊື່ໂດເມນສ່ວນຕົວຂອງທ່ານ (ເຊັ່ນ: <code className="bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded">hr.mycompany.com</code>).
                             </p>
                             <p>
-                              4. ນຳເອົາຄ່າ <strong>DNS Records (A / AAAA ຫຼື CNAME)</strong> ທີ່ໄດ້ຈາກ Google Console ໄປເພີ່ມໃສ່ໃນເວັບໄຊຜູ້ໃຫ້ບໍລິການໂດເມນຂອງທ່ານ (ເຊັ່ນ Namecheap, GoDaddy, ຫຼື ສູນອິນເຕີເນັດແຫ່ງຊາດ LANIC).
+                              4. ນຳເອົາຄ່າ <strong>DNS Records (A / AAAA ຫຼື CNAME)</strong> ທີ່ໄດ້ຈາກ Google Console ໄປເພີ່ມໃສ່ໃນເວັບໄຊຜູ້ໃຫ້ບໍລິການໂດເມນຂອງທ່ານ (ເຊັ່ນ Namecheap, GoDaddy, ຫຼື LANIC).
                             </p>
                             <p>
                               5. ລໍຖ້າ DNS ອັບເດດປະມານ 10-30 ນາທີ, ພະນັກງານທຸກຄົນກໍຈະສາມາດເປີດຜ່ານມືຖືໄດ້ທັນທີ 100% ໂດຍບໍ່ມີບັນຫາເຄືອຂ່າຍບລັອກອີກຕໍ່ໄປ!

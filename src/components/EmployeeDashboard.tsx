@@ -6,10 +6,9 @@ import {
   QrCode, Camera, X, CheckCircle, Loader2
 } from 'lucide-react';
 import { Employee, AttendanceRecord, WorkStatus, LeaveType, SystemNotification, ShiftAssignment } from '../types';
-import { calculateHours, formatHours, formatLaoDate } from '../data';
+import { calculateHours, formatHours, formatLaoDate, checkLaoNetwork } from '../data';
 import { triggerNativeNotification } from './NotificationBanner';
 import { Html5Qrcode } from 'html5-qrcode';
-import { MobileLinkGuide } from './MobileLinkGuide';
 
 // Helper function to calculate distance in meters using Haversine formula
 function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -63,6 +62,7 @@ interface EmployeeDashboardProps {
   checkOutStart?: string;
   checkOutDeadline?: string;
   enableGpsRestriction?: boolean;
+  enableNetworkRestriction?: boolean;
   officeLat?: number;
   officeLng?: number;
   officeRadius?: number;
@@ -82,6 +82,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
   checkOutStart = "15:40",
   checkOutDeadline = "18:00",
   enableGpsRestriction = false,
+  enableNetworkRestriction = false,
   officeLat = 17.9638,
   officeLng = 102.6132,
   officeRadius = 200,
@@ -215,6 +216,23 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
         return;
       }
       console.warn("GPS lookup failed in QR scanner, but continuing since restriction is disabled.", err);
+      setQrScanError(null);
+    }
+
+    // Lao Network check if enabled (automatically bypasses if verified physically within GPS office radius)
+    const isWithinGpsOffice = distance !== null && distance <= officeRadius;
+    if (enableNetworkRestriction && !isWithinGpsOffice) {
+      setQrScanError("ກຳລັງກວດສອບເຄືອຂ່າຍອິນເຕີເນັດຂອງທ່ານ...");
+      try {
+        const netInfo = await checkLaoNetwork();
+        if (!netInfo.isLaoNetwork) {
+          setQrScanError(`ບໍ່ສາມາດໝາຍວັນງານໄດ້: ເຄືອຂ່າຍອິນເຕີເນັດຂອງທ່ານຄື "${netInfo.ispName}" (${netInfo.countryCode}). ລະບົບອະນຸຍາດໃຫ້ Check-In/Out ສະເພາະເຄືອຂ່າຍມືຖື ຫຼື Wi-Fi ໃນລາວ ເທົ່ານັ້ນ (LTC, Unitel, TPlus).`);
+          return;
+        }
+      } catch (err) {
+        setQrScanError("ບໍ່ສາມາດກວດສອບເຄືອຂ່າຍອິນເຕີເນັດໄດ້. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ຂອງທ່ານ.");
+        return;
+      }
       setQrScanError(null);
     }
 
@@ -465,12 +483,13 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
   }, []);
 
   // Format date helper
-  const formattedDate = currentTime.toLocaleDateString('lo-LA', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = (() => {
+    const weekday = currentTime.toLocaleDateString('lo-LA', { weekday: 'long' });
+    const day = String(currentTime.getDate()).padStart(2, '0');
+    const month = String(currentTime.getMonth() + 1).padStart(2, '0');
+    const year = currentTime.getFullYear();
+    return `${weekday}, ${day}/${month}/${year}`;
+  })();
 
   const formattedTime = currentTime.toLocaleTimeString('lo-LA', {
     hour: '2-digit',
@@ -525,6 +544,24 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
       }
       console.warn("GPS lookup failed, continuing since restriction is disabled or is out of office", err);
     }
+
+    // Lao Network check if enabled (automatically bypasses if verified physically within GPS office radius)
+    const isWithinGpsOffice = distance !== null && distance <= officeRadius;
+    if (enableNetworkRestriction && !isWithinGpsOffice) {
+      try {
+        const netInfo = await checkLaoNetwork();
+        if (!netInfo.isLaoNetwork) {
+          alert(`ບໍ່ສາມາດ Check-In ໄດ້: ເຄືອຂ່າຍອິນເຕີເນັດຂອງທ່ານຄື "${netInfo.ispName}" (${netInfo.countryCode}). ລະບົບອະນຸຍາດໃຫ້ Check-In ສະເພາະເຄືອຂ່າຍມືຖື ຫຼື Wi-Fi ໃນລາວ ເທົ່ານັ້ນ (LTC, Unitel, TPlus).`);
+          setIsGpsChecking(false);
+          return;
+        }
+      } catch (err) {
+        alert("ບໍ່ສາມາດກວດສອບເຄືອຂ່າຍອິນເຕີເນັດໄດ້. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ຂອງທ່ານ.");
+        setIsGpsChecking(false);
+        return;
+      }
+    }
+
     setIsGpsChecking(false);
 
     const timeStr = new Date().toLocaleTimeString('lo-LA', {
@@ -632,6 +669,24 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
       }
       console.warn("GPS lookup failed during check-out, continuing", err);
     }
+
+    // Lao Network check if enabled (automatically bypasses if verified physically within GPS office radius)
+    const isWithinGpsOffice = distance !== null && distance <= officeRadius;
+    if (enableNetworkRestriction && !isWithinGpsOffice) {
+      try {
+        const netInfo = await checkLaoNetwork();
+        if (!netInfo.isLaoNetwork) {
+          alert(`ບໍ່ສາມາດ Check-Out ໄດ້: ເຄືອຂ່າຍອິນເຕີເນັດຂອງທ່ານຄື "${netInfo.ispName}" (${netInfo.countryCode}). ລະບົບອະນຸຍາດໃຫ້ Check-Out ສະເພາະເຄືອຂ່າຍມືຖື ຫຼື Wi-Fi ໃນລາວ ເທົ່ານັ້ນ (LTC, Unitel, TPlus).`);
+          setIsGpsChecking(false);
+          return;
+        }
+      } catch (err) {
+        alert("ບໍ່ສາມາດກວດສອບເຄືອຂ່າຍອິນເຕີເນັດໄດ້. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ຂອງທ່ານ.");
+        setIsGpsChecking(false);
+        return;
+      }
+    }
+
     setIsGpsChecking(false);
 
     const timeStr = new Date().toLocaleTimeString('lo-LA', {
@@ -712,12 +767,12 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
       employeeId: activeEmployee.id,
       employeeName: `${activeEmployee.firstName} ${activeEmployee.lastName}`,
       type: 'leave_request',
-      message: `ໄດ້ສົ່ງໃບສະເໜີ (${leaveType}) ວັນທີ ${leaveDates.startDate} ຫາ ${leaveDates.endDate} - ລາຍລະອຽດ: ${leaveDetailsText}`,
+      message: `ໄດ້ສົ່ງໃບສະເໜີ (${leaveType}) ວັນທີ ${formatLaoDate(leaveDates.startDate)} ຫາ ${formatLaoDate(leaveDates.endDate)} - ລາຍລະອຽດ: ${leaveDetailsText}`,
     });
 
     triggerNativeNotification(
       'ສົ່ງໃບລາພັກແລ້ວ',
-      `${activeEmployee.firstName} ສະເໜີ ${leaveType} ວັນທີ ${leaveDates.startDate} ຫາ ${leaveDates.endDate}`
+      `${activeEmployee.firstName} ສະເໜີ ${leaveType} ວັນທີ ${formatLaoDate(leaveDates.startDate)} ຫາ ${formatLaoDate(leaveDates.endDate)}`
     );
 
     // Reset Form
@@ -780,22 +835,19 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
 
   return (
     <div id="employee-dashboard-container" className="space-y-6">
-      {/* Mobile Link Access & Troubleshooting Guide */}
-      <MobileLinkGuide />
-
       {/* QR Code Fast Attendance Banner */}
-      <div id="qr-scan-banner" className="bg-gradient-to-r from-teal-500/10 to-teal-600/5 dark:from-teal-950/20 dark:to-teal-900/10 rounded-3xl p-5 border border-teal-100/60 dark:border-teal-900/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fade-in">
-        <div className="flex items-center gap-3.5 text-center sm:text-left flex-col sm:flex-row">
-          <div className="p-3 bg-teal-600 text-white rounded-2xl shadow-md shadow-teal-500/20">
-            <QrCode className="w-6 h-6 animate-pulse" />
+      <div id="qr-scan-banner" className="bg-gradient-to-r from-teal-500/10 to-teal-600/5 dark:from-teal-950/20 dark:to-teal-900/10 rounded-3xl p-6 border border-teal-100/60 dark:border-teal-900/30 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-sm animate-fade-in">
+        <div className="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+          <div className="p-3.5 bg-teal-600 text-white rounded-2xl shadow-md shadow-teal-500/20">
+            <QrCode className="w-7 h-7 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-sm font-extrabold text-slate-800 dark:text-slate-100 font-sans">
-              {enableQrCodeSystem ? "ສະແກນ QR Code ເພື່ອ ເຂົ້າ-ອອກວຽກ ໄດ້ໄວຂຶ້ນ!" : "ລະບົບສະແກນ QR Code ປິດໃຊ້ງານຊົ່ວຄາວ (Disabled by HR)"}
+            <h2 className="text-base font-extrabold text-slate-800 dark:text-slate-100 font-sans">
+              {enableQrCodeSystem ? "ລະບົບສະແກນ QR Code (QR Code Scanner)" : "ລະບົບສະແກນ QR Code ປິດໃຊ້ງານຊົ່ວຄາວ (Disabled by HR)"}
             </h2>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-sans mt-0.5 max-w-lg leading-relaxed">
+            <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-sans mt-0.5 max-w-lg leading-relaxed">
               {enableQrCodeSystem 
-                ? "ພຽງແຕ່ສະແກນບັດ QR Code ຂອງທ່ານໃສ່ກ້ອງ, ລະບົບຈະ Check-In / Check-Out ໃຫ້ທັນທີໂດຍອັດຕະໂນມັດ ໂດຍບໍ່ຕ້ອງເສຍເວລາເລືອກລາຍຊື່."
+                ? "ກົດປຸ່ມຂ້າງໆເພື່ອເລີ່ມການສະແກນບັດ QR Code ຂອງທ່ານ"
                 : "HR Admin ໄດ້ປິດການໃຊ້ງານລະບົບສະແກນ QR Code ຊົ່ວຄາວ. ກະລຸນາໃຊ້ຟອມເລືອກລາຍຊື່ ແລະ ລົງເວລາດ້ານລຸ່ມເພື່ອເຂົ້າ/ອອກວຽກ."}
             </p>
           </div>
@@ -808,9 +860,9 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
             <button
               id="open-scanner-btn-system-disabled"
               disabled
-              className="bg-rose-100 dark:bg-rose-950/40 text-rose-500 dark:text-rose-400 text-xs font-bold font-sans py-2.5 px-5 rounded-xl flex items-center gap-2 opacity-80 cursor-not-allowed whitespace-nowrap"
+              className="bg-rose-100 dark:bg-rose-950/40 text-rose-500 dark:text-rose-400 text-sm font-bold font-sans py-3.5 px-7 rounded-2xl flex items-center gap-2.5 opacity-80 cursor-not-allowed whitespace-nowrap"
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-5 h-5" />
               ປິດການສະແກນ QR
             </button>
           </div>
@@ -822,9 +874,9 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
             <button
               id="open-scanner-btn-disabled"
               disabled
-              className="bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold font-sans py-2.5 px-5 rounded-xl flex items-center gap-2 opacity-60 cursor-not-allowed whitespace-nowrap"
+              className="bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm font-bold font-sans py-3.5 px-7 rounded-2xl flex items-center gap-2.5 opacity-60 cursor-not-allowed whitespace-nowrap"
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-5 h-5" />
               ສະແກນ QR Code
             </button>
           </div>
@@ -835,9 +887,9 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
               setIsScannerOpen(true);
               startCamera();
             }}
-            className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold font-sans py-2.5 px-5 rounded-xl flex items-center gap-2 transition-all shadow-sm cursor-pointer whitespace-nowrap"
+            className="bg-teal-600 hover:bg-teal-700 text-white text-sm sm:text-base font-extrabold font-sans py-4 px-8 rounded-2xl flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 shadow-md shadow-teal-500/20 cursor-pointer whitespace-nowrap"
           >
-            <Camera className="w-4 h-4" />
+            <Camera className="w-5 h-5" />
             ສະແກນ QR Code
           </button>
         )}
@@ -1375,7 +1427,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
                     return (
                       <tr key={rec.id} className="text-slate-600 dark:text-slate-300 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="py-3 px-2 font-sans font-semibold text-slate-700 dark:text-slate-300">{empName}</td>
-                        <td className="py-3 px-2 font-mono font-medium">{rec.date}</td>
+                        <td className="py-3 px-2 font-mono font-medium">{formatLaoDate(rec.date)}</td>
                         <td className="py-3 px-2 font-sans">
                           {rec.status === 'ລາພັກ' ? (
                             <div className="flex flex-col gap-1 items-start">
@@ -1610,12 +1662,14 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({
                     <div className="text-center">
                       <span className="text-[10px] text-slate-400 font-sans block uppercase font-bold">ວັນທີເດືອນປີ (Date)</span>
                       <span className="text-xs font-bold text-slate-850 dark:text-slate-100 font-sans">
-                        {new Date().toLocaleDateString('lo-LA', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
+                        {(() => {
+                          const now = new Date();
+                          const wd = now.toLocaleDateString('lo-LA', { weekday: 'long' });
+                          const d = String(now.getDate()).padStart(2, '0');
+                          const m = String(now.getMonth() + 1).padStart(2, '0');
+                          const y = now.getFullYear();
+                          return `${wd}, ${d}/${m}/${y}`;
+                        })()}
                       </span>
                     </div>
                     <div className="h-px bg-slate-100 dark:bg-slate-700 w-1/2 mx-auto"></div>

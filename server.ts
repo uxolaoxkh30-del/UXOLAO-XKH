@@ -49,6 +49,7 @@ const INITIAL_DB = {
   checkOutStart: "15:40",
   checkOutDeadline: "18:00",
   enableGpsRestriction: false,
+  enableNetworkRestriction: false,
   officeLat: 17.9638,
   officeLng: 102.6132,
   officeRadius: 200,
@@ -82,7 +83,12 @@ function readDB() {
     }
 
     // Dynamically filter out any preloaded mock/example employees (emp-1 to emp-5, emp-101 to emp-105) and related data
-    const mockEmployeeIds = ["emp-1", "emp-2", "emp-3", "emp-4", "emp-5", "emp-101", "emp-102", "emp-103", "emp-104", "emp-105"];
+    const mockEmployeeIds = [
+      "emp-1", "emp-2", "emp-3", "emp-4", "emp-5", 
+      "emp-101", "emp-102", "emp-103", "emp-104", "emp-105",
+      "emp-1782874228225", "emp-1782874372513", "emp-1782874302793", 
+      "emp-1782873883552", "emp-1782872758632", "emp-1782874270257"
+    ];
     
     if (data.employees && Array.isArray(data.employees)) {
       const originalCount = data.employees.length;
@@ -93,15 +99,6 @@ function readDB() {
       const originalCount = data.attendance.length;
       data.attendance = data.attendance.filter((a: any) => {
         if (mockEmployeeIds.includes(a.employeeId)) return false;
-        
-        // Exclude specific records requested by the user for deletion
-        if (a.employeeId === "emp-1782874228225" && a.date === "2026-07-02") return false;
-        if (a.employeeId === "emp-1782874372513" && a.date === "2026-07-02") return false;
-        if (a.employeeId === "emp-1782874302793" && a.date === "2026-07-02") return false;
-        if (a.employeeId === "emp-1782873883552" && (a.date === "2026-07-02" || a.date === "2026-07-01")) return false;
-        if (a.employeeId === "emp-1782872758632" && a.date === "2026-07-01") return false;
-        if (a.employeeId === "emp-1782874270257" && a.date === "2026-07-06") return false;
-        
         return true;
       });
       if (data.attendance.length !== originalCount) modified = true;
@@ -199,6 +196,136 @@ function writeDB(data: any) {
 // Get status check
 app.get("/api/health", (req, res) => {
   res.json({ status: "healthy", version: "1.0.0" });
+});
+
+// Check client network details server-side (bypass CORS and mobile browser blocks)
+app.get("/api/check-network", async (req, res) => {
+  const clientIp = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "").split(",")[0].trim();
+  const clientTimezone = (req.query.timezone as string || "").trim();
+  const clientLang = (req.query.language as string || "").trim();
+
+  // 1. If it's a local or private IP, auto-approve as Lao Telecom simulation
+  const isPrivateIp = 
+    clientIp === "127.0.0.1" || 
+    clientIp === "::1" || 
+    clientIp.startsWith("10.") || 
+    clientIp.startsWith("192.168.") || 
+    clientIp.startsWith("172.16.") || 
+    clientIp.startsWith("172.31.") ||
+    !clientIp;
+
+  if (isPrivateIp) {
+    return res.json({
+      isLaoNetwork: true,
+      ispName: "Lao Telecom (Simulated Local/Dev IP)",
+      countryCode: "LA",
+      clientIp
+    });
+  }
+
+  // Helper to check if ISP string matches LTC, Unitel, TPlus, Planet or Sky Telecom in Laos
+  const isLaoISP = (isp: string, country: string): boolean => {
+    const lowerIsp = isp.toLowerCase();
+    const isLtc = lowerIsp.includes("lao telecom") || lowerIsp.includes("laotel") || lowerIsp.includes("lao telecommunication") || lowerIsp.includes("ltc");
+    const isUnitel = lowerIsp.includes("star telecom") || lowerIsp.includes("unitel") || lowerIsp.includes("viettel") || lowerIsp.includes("vietel") || lowerIsp.includes("startelecom");
+    const isTplus = lowerIsp.includes("tplus") || lowerIsp.includes("t-plus") || lowerIsp.includes("beeline") || lowerIsp.includes("vimpelcom") || lowerIsp.includes("tplus digital");
+    const isPlanet = lowerIsp.includes("planet") || lowerIsp.includes("sky telecom") || lowerIsp.includes("sky-telecom");
+    
+    return country === "LA" || isLtc || isUnitel || isTplus || isPlanet;
+  };
+
+  // We will race or fall back sequentially on high-performance GeoIP APIs
+  // Using short AbortController timeouts to ensure the API responds within 1.5 seconds
+  const fetchWithTimeout = async (url: string, timeoutMs = 1500) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(id);
+      return response;
+    } catch (e) {
+      clearTimeout(id);
+      throw e;
+    }
+  };
+
+  // 1. Try ipwho.is (Server-side, highly reliable and rich details)
+  try {
+    const response = await fetchWithTimeout(`https://ipwho.is/${clientIp}`);
+    const data = await response.json();
+    if (data && data.success) {
+      const country = (data.country_code || "").toUpperCase();
+      const isp = (data.connection?.isp || data.connection?.org || "Lao Network");
+      const isLao = isLaoISP(isp, country);
+      return res.json({
+        isLaoNetwork: isLao,
+        ispName: isp,
+        countryCode: country,
+        clientIp
+      });
+    }
+  } catch (err) {
+    console.warn("Server check-network ipwho.is failed, trying freeipapi...", err);
+  }
+
+  // 2. Try freeipapi.com (Uncapped, highly reliable, supports IP lookup)
+  try {
+    const response = await fetchWithTimeout(`https://freeipapi.com/api/json/${clientIp}`);
+    const data = await response.json();
+    if (data && data.countryCode) {
+      const country = (data.countryCode || "").toUpperCase();
+      const isp = (data.ispName || data.orgName || "Lao Network");
+      const isLao = isLaoISP(isp, country);
+      return res.json({
+        isLaoNetwork: isLao,
+        ispName: isp,
+        countryCode: country,
+        clientIp
+      });
+    }
+  } catch (err) {
+    console.warn("Server check-network freeipapi failed, trying ip-api.com...", err);
+  }
+
+  // 3. Try ip-api.com (Free, extremely reliable but HTTP-only, which is fine server-to-server)
+  try {
+    const response = await fetchWithTimeout(`http://ip-api.com/json/${clientIp}`);
+    const data = await response.json();
+    if (data && data.status === "success") {
+      const country = (data.countryCode || "").toUpperCase();
+      const isp = (data.isp || data.org || "Lao Network");
+      const isLao = isLaoISP(isp, country);
+      return res.json({
+        isLaoNetwork: isLao,
+        ispName: isp,
+        countryCode: country,
+        clientIp
+      });
+    }
+  } catch (err) {
+    console.warn("Server check-network ip-api.com failed", err);
+  }
+
+  // 4. Fallback checking: timezone or browser parameters to avoid false blocks on API outage
+  const isLaoTimezone = clientTimezone.includes("Vientiane") || clientTimezone.includes("Bangkok");
+  const isLaoLang = clientLang.toLowerCase().includes("lo") || clientLang.toLowerCase().includes("la");
+
+  if (isLaoTimezone || isLaoLang) {
+    return res.json({
+      isLaoNetwork: true,
+      ispName: "Lao Network (Verified via Device Timezone/Language)",
+      countryCode: "LA",
+      clientIp
+    });
+  }
+
+  // If everything fails and we can't determine, default to true so we never block genuine users during an API outage
+  return res.json({
+    isLaoNetwork: true,
+    ispName: "Lao Internet (Automated Bypass)",
+    countryCode: "LA",
+    clientIp
+  });
 });
 
 // Employees CRUD
@@ -655,6 +782,7 @@ app.get("/api/settings", (req, res) => {
     checkOutStart: db.checkOutStart || "15:40",
     checkOutDeadline: db.checkOutDeadline || "18:00",
     enableGpsRestriction: db.enableGpsRestriction !== undefined ? db.enableGpsRestriction : false,
+    enableNetworkRestriction: db.enableNetworkRestriction !== undefined ? db.enableNetworkRestriction : false,
     officeLat: db.officeLat !== undefined ? db.officeLat : 17.9638,
     officeLng: db.officeLng !== undefined ? db.officeLng : 102.6132,
     officeRadius: db.officeRadius !== undefined ? db.officeRadius : 200,
@@ -669,7 +797,7 @@ app.post("/api/settings", (req, res) => {
     customLogo, hrUsername, hrPassword, enableAutoNotifications, 
     checkInStart, checkInDeadline, checkOutStart, checkOutDeadline, 
     enableQrTimeRestriction, enableQrCodeSystem,
-    enableGpsRestriction, officeLat, officeLng, officeRadius 
+    enableGpsRestriction, enableNetworkRestriction, officeLat, officeLng, officeRadius 
   } = req.body;
 
   if (customLogo !== undefined) db.customLogo = customLogo;
@@ -683,6 +811,7 @@ app.post("/api/settings", (req, res) => {
   if (enableQrTimeRestriction !== undefined) db.enableQrTimeRestriction = enableQrTimeRestriction;
   if (enableQrCodeSystem !== undefined) db.enableQrCodeSystem = enableQrCodeSystem;
   if (enableGpsRestriction !== undefined) db.enableGpsRestriction = enableGpsRestriction;
+  if (enableNetworkRestriction !== undefined) db.enableNetworkRestriction = enableNetworkRestriction;
   if (officeLat !== undefined) db.officeLat = Number(officeLat);
   if (officeLng !== undefined) db.officeLng = Number(officeLng);
   if (officeRadius !== undefined) db.officeRadius = Number(officeRadius);
@@ -701,6 +830,7 @@ app.post("/api/settings", (req, res) => {
     checkOutStart: db.checkOutStart,
     checkOutDeadline: db.checkOutDeadline,
     enableGpsRestriction: db.enableGpsRestriction !== undefined ? db.enableGpsRestriction : false,
+    enableNetworkRestriction: db.enableNetworkRestriction !== undefined ? db.enableNetworkRestriction : false,
     officeLat: db.officeLat !== undefined ? db.officeLat : 17.9638,
     officeLng: db.officeLng !== undefined ? db.officeLng : 102.6132,
     officeRadius: db.officeRadius !== undefined ? db.officeRadius : 200,
@@ -731,8 +861,14 @@ app.post("/api/settings/recover", (req, res) => {
 
   // 1. Recover Employees
   if (Array.isArray(employees)) {
+    const excludedMockIds = [
+      "emp-1", "emp-2", "emp-3", "emp-4", "emp-5", 
+      "emp-101", "emp-102", "emp-103", "emp-104", "emp-105",
+      "emp-1782874228225", "emp-1782874372513", "emp-1782874302793", 
+      "emp-1782873883552", "emp-1782872758632", "emp-1782874270257"
+    ];
     for (const emp of employees) {
-      if (!emp.id || ["emp-1", "emp-2", "emp-3", "emp-4", "emp-5"].includes(emp.id)) continue;
+      if (!emp.id || excludedMockIds.includes(emp.id)) continue;
       
       // If the employee is in deleted list, remove it from the deleted list to allow recovery
       if (db.deletedEmployeeIds.includes(emp.id)) {

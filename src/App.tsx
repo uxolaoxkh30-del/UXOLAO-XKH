@@ -12,7 +12,7 @@ import { EmployeeDashboard } from './components/EmployeeDashboard';
 import { HRDashboard } from './components/HRDashboard';
 import { NotificationBanner } from './components/NotificationBanner';
 import { BrowserPermissionsGuide } from './components/BrowserPermissionsGuide';
-import { HomeLanding } from './components/HomeLanding';
+import { MobileLinkGuide } from './components/MobileLinkGuide';
 
 function safeJsonParse<T>(str: string | null, fallback: T): T {
   if (!str) return fallback;
@@ -24,26 +24,25 @@ function safeJsonParse<T>(str: string | null, fallback: T): T {
   }
 }
 
+// Hardcoded list of mock/sample/demo employee IDs that should never be restored or kept in the app
+const MOCK_EMPLOYEE_IDS = [
+  "emp-1", "emp-2", "emp-3", "emp-4", "emp-5", 
+  "emp-101", "emp-102", "emp-103", "emp-104", "emp-105",
+  "emp-1782874228225", "emp-1782874372513", "emp-1782874302793", 
+  "emp-1782873883552", "emp-1782872758632", "emp-1782874270257"
+];
+
 export default function App() {
   // Load from localStorage if present to prevent any UI flickering or data-loss on start
   const getInitialEmployees = (): Employee[] => {
     const parsed = safeJsonParse<any[]>(localStorage.getItem('hr_employees'), INITIAL_EMPLOYEES);
-    const mockEmployeeIds = ["emp-1", "emp-2", "emp-3", "emp-4", "emp-5", "emp-101", "emp-102", "emp-103", "emp-104", "emp-105"];
-    return parsed.filter((e: any) => !mockEmployeeIds.includes(e.id));
+    return parsed.filter((e: any) => !MOCK_EMPLOYEE_IDS.includes(e.id));
   };
 
   const getInitialAttendance = (): AttendanceRecord[] => {
     const parsed = safeJsonParse<any[]>(localStorage.getItem('hr_attendance'), INITIAL_ATTENDANCE);
-    const mockEmployeeIds = ["emp-1", "emp-2", "emp-3", "emp-4", "emp-5", "emp-101", "emp-102", "emp-103", "emp-104", "emp-105"];
     return parsed.filter((a: any) => {
-      if (mockEmployeeIds.includes(a.employeeId)) return false;
-      // Exclude specific records requested by the user for deletion
-      if (a.employeeId === "emp-1782874228225" && a.date === "2026-07-02") return false;
-      if (a.employeeId === "emp-1782874372513" && a.date === "2026-07-02") return false;
-      if (a.employeeId === "emp-1782874302793" && a.date === "2026-07-02") return false;
-      if (a.employeeId === "emp-1782873883552" && (a.date === "2026-07-02" || a.date === "2026-07-01")) return false;
-      if (a.employeeId === "emp-1782872758632" && a.date === "2026-07-01") return false;
-      if (a.employeeId === "emp-1782874270257" && a.date === "2026-07-06") return false;
+      if (MOCK_EMPLOYEE_IDS.includes(a.employeeId)) return false;
       return true;
     });
   };
@@ -80,23 +79,24 @@ export default function App() {
   const [checkOutStart, setCheckOutStart] = useState<string>("15:40");
   const [checkOutDeadline, setCheckOutDeadline] = useState<string>("18:00");
   const [enableGpsRestriction, setEnableGpsRestriction] = useState<boolean>(false);
+  const [enableNetworkRestriction, setEnableNetworkRestriction] = useState<boolean>(false);
   const [officeLat, setOfficeLat] = useState<number>(17.9638);
   const [officeLng, setOfficeLng] = useState<number>(102.6132);
   const [officeRadius, setOfficeRadius] = useState<number>(200);
 
-  // Selected View: 'home' (default), 'employee' or 'hr'
-  const [activeView, setActiveView] = useState<'home' | 'employee' | 'hr'>(() => {
+  // Selected View: 'employee' or 'hr'
+  const [activeView, setActiveView] = useState<'employee' | 'hr'>(() => {
     const cached = sessionStorage.getItem('active_view');
-    if (cached === 'employee' || cached === 'hr' || cached === 'home') {
+    if (cached === 'employee' || cached === 'hr') {
       return cached;
     }
-    return 'home';
+    return 'employee';
   });
 
   // Sync activeView to sessionStorage and log out of HR immediately when switching views
   useEffect(() => {
     sessionStorage.setItem('active_view', activeView);
-    if (activeView === 'employee' || activeView === 'home') {
+    if (activeView === 'employee') {
       sessionStorage.setItem('hr_authenticated', 'false');
     }
   }, [activeView]);
@@ -187,21 +187,15 @@ export default function App() {
         const allDeletedAttendance = Array.from(new Set([...serverDeletedAttendance, ...clientDeletedAttendance]));
 
         const safeLocalEmployees = localEmployees.filter(
-          e => !["emp-1", "emp-2", "emp-3", "emp-4", "emp-5"].includes(e.id) && !allDeletedEmployees.includes(e.id)
+          e => !MOCK_EMPLOYEE_IDS.includes(e.id) && !allDeletedEmployees.includes(e.id)
         );
         const safeLocalAttendance = localAttendance.filter(
-          a => !["emp-1", "emp-2", "emp-3", "emp-4", "emp-5"].includes(a.employeeId) && 
+          a => !MOCK_EMPLOYEE_IDS.includes(a.employeeId) && 
                !allDeletedAttendance.includes(a.id) &&
-               !allDeletedEmployees.includes(a.employeeId) &&
-               !(a.employeeId === "emp-1782874228225" && a.date === "2026-07-02") &&
-               !(a.employeeId === "emp-1782874372513" && a.date === "2026-07-02") &&
-               !(a.employeeId === "emp-1782874302793" && a.date === "2026-07-02") &&
-               !(a.employeeId === "emp-1782873883552" && (a.date === "2026-07-02" || a.date === "2026-07-01")) &&
-               !(a.employeeId === "emp-1782872758632" && a.date === "2026-07-01") &&
-               !(a.employeeId === "emp-1782874270257" && a.date === "2026-07-06")
+               !allDeletedEmployees.includes(a.employeeId)
         );
         const safeLocalNotifications = localNotifications.filter(
-          n => !["emp-1", "emp-2", "emp-3", "emp-4", "emp-5"].includes(n.employeeId || "") && 
+          n => !MOCK_EMPLOYEE_IDS.includes(n.employeeId || "") && 
                !allDeletedEmployees.includes(n.employeeId || "")
         );
 
@@ -299,6 +293,9 @@ export default function App() {
           }
           if (settings.enableGpsRestriction !== undefined) {
             setEnableGpsRestriction(settings.enableGpsRestriction);
+          }
+          if (settings.enableNetworkRestriction !== undefined) {
+            setEnableNetworkRestriction(settings.enableNetworkRestriction);
           }
           if (settings.officeLat !== undefined) {
             setOfficeLat(settings.officeLat);
@@ -524,7 +521,8 @@ export default function App() {
     newEnableGpsRestriction?: boolean,
     newOfficeLat?: number,
     newOfficeLng?: number,
-    newOfficeRadius?: number
+    newOfficeRadius?: number,
+    newEnableNetworkRestriction?: boolean
   ) => {
     triggerMutation();
     setCheckInDeadline(newCheckIn);
@@ -541,6 +539,9 @@ export default function App() {
     }
     if (newEnableGpsRestriction !== undefined) {
       setEnableGpsRestriction(newEnableGpsRestriction);
+    }
+    if (newEnableNetworkRestriction !== undefined) {
+      setEnableNetworkRestriction(newEnableNetworkRestriction);
     }
     if (newOfficeLat !== undefined) {
       setOfficeLat(newOfficeLat);
@@ -851,28 +852,6 @@ export default function App() {
           <div className="flex items-center gap-2">
             <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl relative">
               <motion.button
-                id="view-home-btn"
-                onClick={() => setActiveView('home')}
-                whileTap={{ scale: 0.96 }}
-                className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold font-sans transition-colors duration-200 cursor-pointer z-10 ${
-                  activeView === 'home'
-                    ? 'text-white'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                {activeView === 'home' && (
-                  <motion.div
-                    layoutId="active-portal-tab"
-                    className="absolute inset-0 bg-emerald-600 rounded-xl -z-10 shadow-sm"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <Home className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">ໜ້າຫຼັກ (Home)</span>
-                <span className="inline sm:hidden">Home</span>
-              </motion.button>
-
-              <motion.button
                 id="view-employee-btn"
                 onClick={() => setActiveView('employee')}
                 whileTap={{ scale: 0.96 }}
@@ -922,42 +901,10 @@ export default function App() {
       </header>
 
       {/* Main Body */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        {/* Instant Mobile Notification System notice */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-6 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-teal-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-teal-600">
-              <Smartphone className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 font-sans">
-                ລະບົບແຈ້ງເຕືອນຜ່ານມື້ຖື ແລະ ບຣາວເຊີທັນທີ (Instant Notifications)
-              </h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-sans leading-relaxed mt-0.5">
-                ເມື່ອມີການ Check In/Out, ລົງທະບຽນໄປວຽກນອກ, ຫຼື ສົ່ງໃບລາພັກ, ລະບົບຈະສົ່ງແຈ້ງເຕືອນພ້ອມສຽງຊິມທັນທີ.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              if ('Notification' in window) {
-                Notification.requestPermission().then((perm) => {
-                  if (perm === 'granted') {
-                    alert('ອະນຸຍາດແຈ້ງເຕືອນຜ່ານບຣາວເຊີສຳເລັດ!');
-                  } else {
-                    alert('ກະລຸນາເປີດການອະນຸຍາດໃນການຕັ້ງຄ່າບຣາວເຊີຂອງທ່ານ.');
-                  }
-                });
-              } else {
-                alert('ບຣາວເຊີນີ້ບໍ່ຮອງຮັບ Native Notifications ແຕ່ລະບົບຈຳລອງໃນແອັບຍັງໃຊ້ງານໄດ້!');
-              }
-            }}
-            className="text-[11px] font-bold text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-slate-800 hover:bg-teal-50/50 dark:hover:bg-slate-800/50 px-3.5 py-1.5 rounded-xl font-sans transition-all cursor-pointer whitespace-nowrap"
-          >
-            🔔 ທົດສອບການແຈ້ງເຕືອນ
-          </button>
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        {/* Floating help button & banner guide for mobile connectivity in Laos */}
+        <MobileLinkGuide />
 
         {/* View Routing Render */}
         <motion.div
@@ -966,19 +913,7 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {activeView === 'home' ? (
-            <HomeLanding
-              onNavigate={(view) => setActiveView(view)}
-              onOpenMobileGuide={() => {
-                document.getElementById('btn-floating-mobile-guide')?.click();
-              }}
-              employeeCount={employees.length}
-              todayCheckInCount={(() => {
-                const todayStr = new Date().toLocaleDateString('en-CA'); // "YYYY-MM-DD"
-                return attendance.filter(r => r.date === todayStr).length;
-              })()}
-            />
-          ) : activeView === 'employee' ? (
+          {activeView === 'employee' ? (
             <EmployeeDashboard
               employees={employees}
               attendance={attendance}
@@ -993,6 +928,7 @@ export default function App() {
               checkInStart={checkInStart}
               checkOutStart={checkOutStart}
               enableGpsRestriction={enableGpsRestriction}
+              enableNetworkRestriction={enableNetworkRestriction}
               officeLat={officeLat}
               officeLng={officeLng}
               officeRadius={officeRadius}
@@ -1023,6 +959,7 @@ export default function App() {
               enableQrTimeRestriction={enableQrTimeRestriction}
               enableQrCodeSystem={enableQrCodeSystem}
               enableGpsRestriction={enableGpsRestriction}
+              enableNetworkRestriction={enableNetworkRestriction}
               officeLat={officeLat}
               officeLng={officeLng}
               officeRadius={officeRadius}

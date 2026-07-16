@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BrowserPermissionsGuide } from "./BrowserPermissionsGuide";
-import { MobileLinkGuide } from "./MobileLinkGuide";
 import {
   Users,
   Calendar,
@@ -42,6 +41,7 @@ import {
   BookOpen,
   ClipboardList,
   FileText,
+  Wifi,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -153,6 +153,7 @@ interface HRDashboardProps {
   enableQrTimeRestriction?: boolean;
   enableQrCodeSystem?: boolean;
   enableGpsRestriction?: boolean;
+  enableNetworkRestriction?: boolean;
   officeLat?: number;
   officeLng?: number;
   officeRadius?: number;
@@ -166,7 +167,8 @@ interface HRDashboardProps {
     newEnableGpsRestriction?: boolean,
     newOfficeLat?: number,
     newOfficeLng?: number,
-    newOfficeRadius?: number
+    newOfficeRadius?: number,
+    newEnableNetworkRestriction?: boolean
   ) => void;
   onRecoverData?: () => Promise<{
     success: boolean;
@@ -202,6 +204,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
   enableQrTimeRestriction: initialEnableQrTimeRestriction = true,
   enableQrCodeSystem: initialEnableQrCodeSystem = true,
   enableGpsRestriction: initialEnableGpsRestriction = false,
+  enableNetworkRestriction: initialEnableNetworkRestriction = false,
   officeLat: initialOfficeLat = 17.9638,
   officeLng: initialOfficeLng = 102.6132,
   officeRadius: initialOfficeRadius = 200,
@@ -239,6 +242,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
   const [checkOutStart, setCheckOutStart] = useState(initialCheckOutStart);
   const [checkOutDeadline, setCheckOutDeadline] = useState(initialCheckOutDeadline);
   const [enableGpsRestriction, setEnableGpsRestriction] = useState(initialEnableGpsRestriction);
+  const [enableNetworkRestriction, setEnableNetworkRestriction] = useState(initialEnableNetworkRestriction);
   const [officeLat, setOfficeLat] = useState(initialOfficeLat);
   const [officeLng, setOfficeLng] = useState(initialOfficeLng);
   const [officeRadius, setOfficeRadius] = useState(initialOfficeRadius);
@@ -273,6 +277,10 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
   React.useEffect(() => {
     setEnableGpsRestriction(initialEnableGpsRestriction);
   }, [initialEnableGpsRestriction]);
+
+  React.useEffect(() => {
+    setEnableNetworkRestriction(initialEnableNetworkRestriction);
+  }, [initialEnableNetworkRestriction]);
 
   React.useEffect(() => {
     setOfficeLat(initialOfficeLat);
@@ -334,6 +342,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
           setCheckInDeadline(data.checkInDeadline || "08:30");
           setCheckOutDeadline(data.checkOutDeadline || "18:00");
           setEnableGpsRestriction(data.enableGpsRestriction !== undefined ? data.enableGpsRestriction : false);
+          setEnableNetworkRestriction(data.enableNetworkRestriction !== undefined ? data.enableNetworkRestriction : false);
           setOfficeLat(data.officeLat !== undefined ? data.officeLat : 17.9638);
           setOfficeLng(data.officeLng !== undefined ? data.officeLng : 102.6132);
           setOfficeRadius(data.officeRadius !== undefined ? data.officeRadius : 200);
@@ -1556,6 +1565,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
           checkOutStart,
           checkOutDeadline,
           enableGpsRestriction,
+          enableNetworkRestriction,
           officeLat,
           officeLng,
           officeRadius,
@@ -1572,6 +1582,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
         setCheckOutStart(data.checkOutStart || "15:40");
         setCheckOutDeadline(data.checkOutDeadline);
         setEnableGpsRestriction(data.enableGpsRestriction !== undefined ? data.enableGpsRestriction : false);
+        setEnableNetworkRestriction(data.enableNetworkRestriction !== undefined ? data.enableNetworkRestriction : false);
         setOfficeLat(data.officeLat !== undefined ? data.officeLat : 17.9638);
         setOfficeLng(data.officeLng !== undefined ? data.officeLng : 102.6132);
         setOfficeRadius(data.officeRadius !== undefined ? data.officeRadius : 200);
@@ -1586,7 +1597,8 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
             data.enableGpsRestriction,
             data.officeLat,
             data.officeLng,
-            data.officeRadius
+            data.officeRadius,
+            data.enableNetworkRestriction
           );
         }
         setNotifSettingsSuccessMsg("ບັນທຶກການຕັ້ງຄ່າລະບົບ QR Code, ເວລາ ແລະ GPS ສຳເລັດ!");
@@ -2013,9 +2025,6 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
 
   return (
     <div id="hr-dashboard-container" className="space-y-6">
-      {/* Mobile Link Access & Troubleshooting Guide */}
-      <MobileLinkGuide />
-
       {/* HR Header */}
       <div
         id="hr-header-bar"
@@ -2938,7 +2947,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                           </td>
                           <td className="py-3 px-2 font-sans">
                             <span className="font-mono block text-slate-700 dark:text-slate-300">
-                              {rec.date}
+                              {formatLaoDate(rec.date)}
                             </span>
                             {rec.editedAt && (
                               <span
@@ -3044,7 +3053,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                                 >
                                   {rec.leaveDetails?.details || "ສະເໜີລາພັກຕາມລະບຽບ"}
                                   <span className="block text-[10px] text-slate-400 dark:text-slate-500 font-normal mt-0.5 font-sans leading-none">
-                                    ວັນທີ: {rec.leaveDetails?.startDate} ຫາ {rec.leaveDetails?.endDate}
+                                    ວັນທີ: {formatLaoDate(rec.leaveDetails?.startDate)} ຫາ {formatLaoDate(rec.leaveDetails?.endDate)}
                                   </span>
                                 </span>
                                 
@@ -5365,6 +5374,35 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                   </span>
                 </div>
 
+                {/* 5. Lao Mobile Carrier / Wi-Fi Restriction Settings */}
+                <div className="bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <h4 className="text-xs font-bold text-teal-600 dark:text-teal-400 font-sans flex items-center gap-1.5">
+                        <Wifi className="w-4 h-4 text-teal-500 animate-pulse" />
+                        ຈຳກັດເຄືອຂ່າຍອິນເຕີເນັດໃນລາວ (Lao Networks Restriction Only)
+                      </h4>
+                      <p className="text-[10px] text-slate-400 font-sans">
+                        ອະນຸຍາດໃຫ້ໝາຍວັນງານ (Check-In/Out) ສະເພາະຜູ້ທີ່ເຊື່ອມຕໍ່ຜ່ານອິນເຕີເນັດມືຖື ຫຼື Wi-Fi ຂອງຜູ້ໃຫ້ບໍລິການໃນລາວ ເທົ່ານັ້ນ (LTC, Unitel, TPlus).
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={enableNetworkRestriction}
+                        onChange={(e) => setEnableNetworkRestriction(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                    </label>
+                  </div>
+                  <div className="bg-teal-50/40 dark:bg-teal-950/10 p-3 rounded-xl border border-teal-100/50 dark:border-teal-900/20">
+                    <p className="text-[10px] text-teal-700 dark:text-teal-400 leading-relaxed font-sans">
+                      💡 <strong>ໝາຍເຫດ:</strong> ລະບົບຈະກວດສອບ IP ຂອງຜູ້ໃຊ້ໂດຍອັດຕະໂນມັດເພື່ອຢືນຢັນເຄືອຂ່າຍ (Lao Telecom, Star Telecom / Unitel, TPlus / Beeline). ຫາກມີການໃຊ້ VPN ຫຼື ເຄືອຂ່າຍຕ່າງປະເທດ ຈະບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ Check-In/Out. (ສຳລັບເຄື່ອງທົດສອບໃນ localhost ຫຼື Sandbox ລະບົບຈະຈຳລອງເຄືອຂ່າຍໃຫ້ຜ່ານອັດຕະໂນມັດເພື່ອຄວາມສະດວກ).
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center pt-2">
                   <button
                     type="button"
@@ -5846,7 +5884,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                                   {rec.status}
                                 </span>
                                 <span className="text-[10px] font-mono text-slate-500 block mt-1 font-semibold">
-                                  {rec.date}
+                                  {formatLaoDate(rec.date)}
                                 </span>
                               </div>
                             </div>
@@ -5968,7 +6006,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                                   {isApproved ? '✓ ເຫັນດີ' : isRejected ? '✗ ບໍ່ເຫັນດີ' : '⏱ ລໍຖ້າອະນຸມັດ'}
                                 </span>
                                 <span className="text-[10px] font-mono text-slate-500 block mt-1 font-semibold">
-                                  {rec.date}
+                                  {formatLaoDate(rec.date)}
                                 </span>
                               </div>
                             </div>
@@ -5978,7 +6016,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                                 🏖️ ປະເພດ: <span className="text-slate-700 dark:text-slate-300">{rec.leaveDetails?.type || "ລາພັກປະຈຳປີ"}</span>
                               </p>
                               <p className="font-semibold">
-                                📅 ໄລຍະເວລາ: <span className="text-slate-700 dark:text-slate-300 font-mono">{rec.leaveDetails?.startDate} ຫາ {rec.leaveDetails?.endDate} ({dur} ວັນ)</span>
+                                📅 ໄລຍະເວລາ: <span className="text-slate-700 dark:text-slate-300 font-mono">{formatLaoDate(rec.leaveDetails?.startDate)} ຫາ {formatLaoDate(rec.leaveDetails?.endDate)} ({dur} ວັນ)</span>
                               </p>
                               {rec.leaveDetails?.details && (
                                 <p className="italic leading-relaxed">
@@ -6264,7 +6302,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
                                                     {rec.leaveDetails?.type || 'ລາພັກປະຈຳປີ'}
                                                   </td>
                                                   <td className="py-2.5 px-3 font-mono text-slate-600 dark:text-slate-300 font-sans">
-                                                    {rec.leaveDetails?.startDate} ຫາ {rec.leaveDetails?.endDate}
+                                                    {formatLaoDate(rec.leaveDetails?.startDate)} ຫາ {formatLaoDate(rec.leaveDetails?.endDate)}
                                                   </td>
                                                   <td className="py-2.5 px-3 text-center font-bold font-mono">
                                                     {dur} ວັນ

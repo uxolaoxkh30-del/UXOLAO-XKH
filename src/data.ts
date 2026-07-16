@@ -70,28 +70,73 @@ export const formatLaoDate = (dateStr: string | undefined | null): string => {
   if (!dateStr) return "-";
   const parts = dateStr.split("-");
   if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    const day = parts[2].padStart(2, "0");
+    const month = parts[1].padStart(2, "0");
+    const year = parts[0];
+    return `${day}/${month}/${year}`;
   }
   return dateStr;
 };
 
-// Convert YYYY-MM-DD to readable Lao text format (e.g. 25 ກໍລະກົດ 2026)
+// Convert YYYY-MM-DD to readable Lao text format (now updated to DD/MM/YYYY)
 export const formatLaoDateFriendly = (dateStr: string | undefined | null): string => {
-  if (!dateStr) return "-";
-  const parts = dateStr.split("-");
-  if (parts.length === 3) {
-    const year = parseInt(parts[0], 10);
-    const monthIndex = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-    const laoMonths = [
-      "ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ",
-      "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"
-    ];
-    if (monthIndex >= 0 && monthIndex < 12) {
-      return `${day} ${laoMonths[monthIndex]} ${year}`;
-    }
-    return `${day}/${monthIndex + 1}/${year}`;
-  }
-  return dateStr;
+  return formatLaoDate(dateStr);
 };
+
+export interface NetworkInfo {
+  isLaoNetwork: boolean;
+  ispName: string;
+  countryCode: string;
+}
+
+// Check if client is using Lao mobile networks or Wi-Fi (LTC, Unitel, TPlus)
+export const checkLaoNetwork = async (): Promise<NetworkInfo> => {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+  const language = navigator.languages ? navigator.languages.join(",") : navigator.language || "";
+
+  try {
+    // Call the server-side network check endpoint with short timeout (1.5 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
+
+    const res = await fetch(`/api/check-network?timezone=${encodeURIComponent(timezone)}&language=${encodeURIComponent(language)}`, {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        isLaoNetwork: !!data.isLaoNetwork,
+        ispName: data.ispName || "Lao Network",
+        countryCode: data.countryCode || "LA"
+      };
+    }
+  } catch (err) {
+    console.warn("Server checkLaoNetwork API failed, running fast client fallback:", err);
+  }
+
+  // Fast Client-Side Fallback if server is not responding or unreachable
+  const isLaoTimezone = timezone === "Asia/Vientiane" || timezone === "Asia/Bangkok";
+  const isLaoLanguage = navigator.languages 
+    ? navigator.languages.some(l => l.toLowerCase().startsWith('lo')) 
+    : navigator.language.toLowerCase().startsWith('lo');
+
+  const isLocal = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1' || 
+                  window.location.hostname.includes('ais-dev') ||
+                  window.location.hostname.includes('run.app') ||
+                  isLaoTimezone ||
+                  isLaoLanguage;
+
+  return {
+    isLaoNetwork: isLocal,
+    ispName: isLocal 
+      ? (isLaoTimezone ? 'Lao Telecom / Unitel / TPlus (Detected via Timezone)' : 'Lao Telecom (LTC - Simulated)') 
+      : 'Unknown Offline Network',
+    countryCode: isLocal ? 'LA' : 'Unknown'
+  };
+};
+
 
